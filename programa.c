@@ -157,3 +157,4 @@ int Verificarlogin() {
     // Fecha o arquivo
     fclose(arquivo);
     return 0;
+}
