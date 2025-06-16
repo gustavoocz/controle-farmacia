@@ -27,7 +27,7 @@ void main(){
 
 void Menu(){
 	int op;
-	//ao final de todas as fun��es, o main ou Menu devem ser chamados para dar continuidade ao programa
+	//ao final de todas as funções, o main ou Menu devem ser chamados para dar continuidade ao programa
 	if(nivelacesso==1){
 		//menu para o admin
 		printf("\n----- MENU ADMINISTRATIVO ------\n");
@@ -35,7 +35,7 @@ void Menu(){
 		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma op��o: ");
+		printf("Escolha uma opção: ");
 		scanf("%d",&op);
 		switch(op){
 			case 1:
@@ -61,7 +61,7 @@ void Menu(){
 		printf("1. Registrar venda\n2. Consulta\n3. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma op��o: ");
+		printf("Escolha uma opção: ");
 		scanf("%d",&op);
 		switch(op){
 			case 1:
@@ -82,10 +82,10 @@ int Login(){
 	int nivel;
 	nivel = Verificarlogin();
 	if(nivel==1){
-		printf("Permiss�o de admin concedida\n");
+		printf("Permissão de admin concedida\n");
 		login=1;
 	}else if(nivel==2){
-		printf("Permissao de vendedor concedida\n");
+		printf("Permissão de vendedor concedida\n");
 		login=1;
 	}else{
 		printf("Acesso negado");
@@ -124,7 +124,7 @@ int Verificarlogin() {
 		fgets(senha,sizeof(senha),stdin);
 		senha[strcspn(senha,"\n")]=0;
 
-    	// L� linha por linha do arquivo
+    	// Lê linha por linha do arquivo
     		//reinicia a leitura do arquivo, permitindo as tentativas
     		rewind(arquivo);
     	while (fgets(linha, sizeof(linha), arquivo) != NULL) {
