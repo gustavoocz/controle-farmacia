@@ -39,7 +39,8 @@ void main(){
 
 void Menu(){
 	int op;
-	//ao final de todas as funções, o main ou Menu devem ser chamados para dar continuidade ao programa
+
+	//ao final de todas as funÃ§Ãµes, o main ou Menu devem ser chamados para dar continuidade ao programa
 	if(nivelacesso==1){
 		//menu para o admin
 		printf("\n----- MENU ADMINISTRATIVO ------\n");
@@ -47,7 +48,7 @@ void Menu(){
 		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma opção: ");
+		printf("Escolha uma opÃ§Ã£o: ");
 		scanf("%d",&op);
 		switch(op){
 			case 1:
@@ -74,7 +75,7 @@ void Menu(){
 		printf("1. Registrar venda\n2. Consulta\n3. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma opção: ");
+		printf("Escolha uma opÃ§Ã£o: ");
 		scanf("%d",&op);
 		switch(op){
 			case 1:
@@ -95,10 +96,10 @@ int Login(){
 	int nivel;
 	nivel = Verificarlogin();
 	if(nivel==1){
-		printf("Permissão de admin concedida\n");
+		printf("PermissÃ£o de admin concedida\n");
 		login=1;
 	}else if(nivel==2){
-		printf("Permissão de vendedor concedida\n");
+		printf("PermissÃ£o de vendedor concedida\n");
 		login=1;
 	}else{
 		printf("Acesso negado");
@@ -137,7 +138,7 @@ int Verificarlogin() {
 		fgets(senha,sizeof(senha),stdin);
 		senha[strcspn(senha,"\n")]=0;
 
-    	// Lê linha por linha do arquivo
+    	// LÃª linha por linha do arquivo
     		//reinicia a leitura do arquivo, permitindo as tentativas
     		rewind(arquivo);
     	while (fgets(linha, sizeof(linha), arquivo) != NULL) {
@@ -177,7 +178,7 @@ int cadastrarItem(){
     int i;
     char temp;
     struct produto produtos;
-    // Validação do nome do produto
+    // Validaï¿½ï¿½o do nome do produto
     do {
     	while (getchar() != '\n'); 
         printf("Digite o nome do produto: ");
@@ -185,85 +186,85 @@ int cadastrarItem(){
         produtos.nome[strcspn(produtos.nome, "\n")] = '\0';
         
         if(strlen(produtos.nome) == 0){
-            printf("Erro: Nome do produto não pode estar vazio! Tente novamente.\n");
+            printf("Erro: Nome do produto nï¿½o pode estar vazio! Tente novamente.\n");
         } else {
             break; 
         }
     } while(1);
     
-    // Validação do código do produto
+    // Validaï¿½ï¿½o do cï¿½digo do produto
     do {
-        printf("Digite o código do produto (número positivo): ");
+        printf("Digite o cï¿½digo do produto (nï¿½mero positivo): ");
         if(scanf("%d", &produtos.codigo) != 1) {
-            printf("Erro: Digite apenas números!\n");
+            printf("Erro: Digite apenas nï¿½meros!\n");
             while (getchar() != '\n'); // Limpa o buffer de entrada
-            continue; // Volta para o início do laço
+            continue; // Volta para o inï¿½cio do laï¿½o
         }
         
         if(produtos.codigo <= 0) {
-            printf("Erro: Código deve ser um número positivo!\n");
-            continue; // Volta para o início do laço
+            printf("Erro: Cï¿½digo deve ser um nï¿½mero positivo!\n");
+            continue; // Volta para o inï¿½cio do laï¿½o
         }
 
-        // ---- Início da validação de duplicidade embutida ----
+        // ---- Inï¿½cio da validaï¿½ï¿½o de duplicidade embutida ----
         FILE *arquivo;
         int codigoExiste = 0;
         
         arquivo = fopen("produtos.txt", "r");
         
-        // Só executa a verificação se o arquivo já existir
+        // Sï¿½ executa a verificaï¿½ï¿½o se o arquivo jï¿½ existir
         if (arquivo != NULL) {
             char linha[200];
             while (fgets(linha, sizeof(linha), arquivo) != NULL) {
                 int codigoArquivo;
-                // Extrai o código da linha (o segundo valor, após o primeiro ';')
+                // Extrai o cï¿½digo da linha (o segundo valor, apï¿½s o primeiro ';')
                 sscanf(linha, "%*[^;];%d", &codigoArquivo);
 
                 if (codigoArquivo == produtos.codigo) {
                     codigoExiste = 1;
-                    break; // Encontrou código duplicado, pode parar de ler
+                    break; // Encontrou cï¿½digo duplicado, pode parar de ler
                 }
             }
-            fclose(arquivo); // Fecha o arquivo após a verificação
+            fclose(arquivo); // Fecha o arquivo apï¿½s a verificaï¿½ï¿½o
         }
-        // ---- Fim da validação ----
+        // ---- Fim da validaï¿½ï¿½o ----
 
         if (codigoExiste) {
-            printf("Erro: Este código já existe! Digite outro código.\n");
+            printf("Erro: Este cï¿½digo jï¿½ existe! Digite outro cï¿½digo.\n");
         } else {
-            break; // Código é válido e único, sai do laço
+            break; // Cï¿½digo ï¿½ vï¿½lido e ï¿½nico, sai do laï¿½o
         }
     } while(1);
     
-    // Validação do preço
+    // Validaï¿½ï¿½o do preï¿½o
     do {
-        printf("Digite o preço do produto (valor positivo): R$ ");
+        printf("Digite o preï¿½o do produto (valor positivo): R$ ");
         if(scanf("%f", &produtos.preco) != 1) {
-            printf("Erro: Digite um número válido!\n");
+            printf("Erro: Digite um nï¿½mero vï¿½lido!\n");
             while (getchar() != '\n'); 
         } else if(produtos.preco <= 0) {
-            printf("Erro: Preço deve ser maior que zero!\n");
+            printf("Erro: Preï¿½o deve ser maior que zero!\n");
         } else {
             break;
         }
     } while(1);
     
-    // Validação da quantidade
+    // Validaï¿½ï¿½o da quantidade
     do {
-        printf("Digite a quantidade do produto (número não negativo): ");
+        printf("Digite a quantidade do produto (nï¿½mero nï¿½o negativo): ");
         if(scanf("%d", &produtos.qtd) != 1) {
-            printf("Erro: Digite apenas números!\n");
+            printf("Erro: Digite apenas nï¿½meros!\n");
             while (getchar() != '\n'); 
         } else if(produtos.qtd < 0) {
-            printf("Erro: Quantidade não pode ser negativa!\n");
+            printf("Erro: Quantidade nï¿½o pode ser negativa!\n");
         } else {
             break;
         }
     } while(1);
     
-    // Validação se é genérico
+    // Validaï¿½ï¿½o se ï¿½ genï¿½rico
     do {
-        printf("Ele é genérico? [s/n]: ");
+        printf("Ele ï¿½ genï¿½rico? [s/n]: ");
         while (getchar() != '\n'); 
         scanf("%c", &temp);
         
@@ -274,13 +275,13 @@ int cadastrarItem(){
             produtos.generico = false;
             break;
         } else {
-            printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
+            printf("Erro: Digite apenas 's' para sim ou 'n' para nï¿½o!\n");
         }
     } while(1);
     
-    // Validação se é remedio ou outro tipo de produto
+    // Validaï¿½ï¿½o se ï¿½ remedio ou outro tipo de produto
     do {
-        printf("É um remédio? [s/n]: ");
+        printf("ï¿½ um remï¿½dio? [s/n]: ");
         while (getchar() != '\n'); 
         scanf("%c", &temp);
         
@@ -291,7 +292,7 @@ int cadastrarItem(){
             produtos.generico = false;
             break;
         } else {
-            printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
+            printf("Erro: Digite apenas 's' para sim ou 'n' para nï¿½o!\n");
         }
     } while(1);
     
