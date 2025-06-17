@@ -19,7 +19,7 @@ struct produto{
 	char nome[50];
 	int codigo, qtd;
 	float preco;
-	bool generico;
+	bool generico, remedio;
 };
 struct produto produtos[100];
 int contador = 0;
@@ -270,6 +270,23 @@ int cadastrarItem(){
         }
     } while(1);
     
+    // Validação se é remedio ou outro tipo de produto
+    do {
+        printf("É um remédio? [s/n]: ");
+        while (getchar() != '\n'); 
+        scanf("%c", &temp);
+        
+        if(temp == 's' || temp == 'S'){
+            produtos[contador].generico = true;
+            break;
+        } else if(temp == 'n' || temp == 'N'){
+            produtos[contador].generico = false;
+            break;
+        } else {
+            printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
+        }
+    } while(1);
+    
     contador++; 
     salvarProdutos();
     printf("\nProduto cadastrado com sucesso!\n");
@@ -290,14 +307,15 @@ void salvarProdutos(){
     }
     
     for(i = 0; i < contador; i++){
-        fprintf(arquivo, "%s;%d;%.2f;%d;%d\n", 
+        fprintf(arquivo, "%s;%d;%.2f;%d;%d;%d\n", 
                 produtos[i].nome, 
                 produtos[i].codigo, 
                 produtos[i].preco, 
                 produtos[i].qtd, 
+                produtos[i].remedio ? 1 : 0,
                 produtos[i].generico ? 1 : 0);
     }
     
     fclose(arquivo);
-}
+}	
 
