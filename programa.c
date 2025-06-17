@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 //variaveis globais
-int login=0,nivelacesso=0;
+int login=0, nivelacesso=0;
 
 //prototipos
 int Verificarlogin();
@@ -13,6 +14,8 @@ int Login();
 void Menu();
 int cadastrarItem();
 void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
+int cadastrarPessoa();
+void salvarPessoa(char nome[50], char cpf[12], char email[100]); 
 
 //estrutura global
 struct produto{
@@ -20,6 +23,10 @@ struct produto{
 	int codigo, qtd;
 	float preco;
 	bool generico, remedio;
+};
+
+struct pessoa {
+	char nome[50], cpf[12], email[100];
 };
 int contador = 0;
 
@@ -49,9 +56,11 @@ void Menu(){
 		printf("--------------------------------\n");
 		printf("Escolha uma opção: ");
 		scanf("%d",&op);
+		while (getchar() != '\n'); 
 		switch(op){
 			case 1:
-				printf("cadastro de clientes");
+				cadastrarPessoa();
+				Menu();
 				break;
 			case 2:
 				cadastrarItem();
@@ -197,15 +206,14 @@ int cadastrarItem(){
         if(scanf("%d", &produtos.codigo) != 1) {
             printf("Erro: Digite apenas números!\n");
             while (getchar() != '\n'); // Limpa o buffer de entrada
-            continue; // Volta para o início do laço
+            continue;
         }
         
         if(produtos.codigo <= 0) {
             printf("Erro: Código deve ser um número positivo!\n");
-            continue; // Volta para o início do laço
+            continue; 
         }
 
-        // ---- Início da validação de duplicidade embutida ----
         FILE *arquivo;
         int codigoExiste = 0;
         
@@ -226,7 +234,6 @@ int cadastrarItem(){
             }
             fclose(arquivo); // Fecha o arquivo após a verificação
         }
-        // ---- Fim da validação ----
 
         if (codigoExiste) {
             printf("Erro: Este código já existe! Digite outro código.\n");
@@ -285,10 +292,10 @@ int cadastrarItem(){
         scanf("%c", &temp);
         
         if(temp == 's' || temp == 'S'){
-            produtos.generico = true;
+            produtos.remedio = true;
             break;
         } else if(temp == 'n' || temp == 'N'){
-            produtos.generico = false;
+            produtos.remedio = false;
             break;
         } else {
             printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
@@ -306,23 +313,101 @@ int cadastrarItem(){
 }
 
 void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio){
+	FILE *arquivo;
+	    
+	arquivo = fopen("produtos.txt", "a");
+	if(arquivo == NULL){
+	    printf("Erro ao abrir arquivo para salvar produtos!\n");
+	    return;
+	}
+	    
+	fprintf(arquivo, "%s;%d;%.2f;%d;%d;%d\n", 
+	        nome, 
+	        codigo, 
+	        preco, 
+	        qtd, 
+	        remedio ? 1 : 0,
+	        generico ? 1 : 0);
+	    
+	    
+	fclose(arquivo);
+}	
+
+int cadastrarPessoa(){
+	
+	struct pessoa pessoas;
+	int i;
+	
+	// Validação do nome da pessoa
+    do {
+        printf("Digite seu nome: ");
+        fgets(pessoas.nome, sizeof(pessoas.nome), stdin);
+        pessoas.nome[strcspn(pessoas.nome, "\n")] = '\0';
+		        
+        if(strlen(pessoas.nome) == 0){
+            printf("Erro: Nome do produto não pode estar vazio! Tente novamente.\n");
+        } else {
+            break; 
+        }
+    } while(1);
+    
+    // Validação do cpf da pessoa
+    do {
+        printf("Digite seu CPF: ");
+        scanf("%s", pessoas.cpf);
+        while (getchar() != '\n');
+        
+        bool cpfValido = true;
+        
+        if(strlen(pessoas.cpf) != 11){
+            cpfValido = false;
+        } else {
+            for (i = 0; i < 11; i++) {
+                if (!isdigit(pessoas.cpf[i])) {
+                    cpfValido = false;
+                    break; 
+                }
+            }
+        }
+        if(!cpfValido){
+            printf("Erro: CPF inválido! Deve conter exatamente 11 dígitos numéricos. Tente novamente.\n");
+        } else {
+            break; 
+        }        
+    } while(1);
+ 
+    // Validação do email da pessoa  
+    do {
+        printf("Digite seu email: ");
+        fgets(pessoas.email, sizeof(pessoas.email), stdin);
+        pessoas.email[strcspn(pessoas.email, "\n")] = '\0';
+        
+        if(strlen(pessoas.email) == 0){
+            printf("Erro: Email não pode estar vazio! Tente novamente.\n");
+        } else {
+            break; 
+        }
+    } while(1);
+	
+	salvarPessoa(pessoas.nome, pessoas.cpf, pessoas.email);
+    
+    printf("\nPessoa cadastrada com sucesso!\n");
+    system("pause");
+    system("cls");
+    
+    return 1;	
+}
+
+void salvarPessoa(char nome[50], char cpf[12], char email[100]){
     FILE *arquivo;
     
-    arquivo = fopen("produtos.txt", "a");
+    arquivo = fopen("clientes.txt", "a");
     if(arquivo == NULL){
-        printf("Erro ao abrir arquivo para salvar produtos!\n");
+        printf("Erro ao abrir arquivo para salvar pessoas!\n");
         return;
     }
     
-    fprintf(arquivo, "%s;%d;%.2f;%d;%d;%d\n", 
-            nome, 
-            codigo, 
-            preco, 
-            qtd, 
-            remedio ? 1 : 0,
-            generico ? 1 : 0);
-    
+    fprintf(arquivo, "%s;%s;%s\n", nome, cpf, email);
     
     fclose(arquivo);
-}	
-
+}
