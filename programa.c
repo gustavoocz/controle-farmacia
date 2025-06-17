@@ -12,7 +12,7 @@ int Verificarlogin();
 int Login();
 void Menu();
 int cadastrarItem();
-void salvarProdutos();
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
 
 //estrutura global
 struct produto{
@@ -21,7 +21,6 @@ struct produto{
 	float preco;
 	bool generico, remedio;
 };
-struct produto produtos[100];
 int contador = 0;
 
 void main(){
@@ -175,24 +174,17 @@ int Verificarlogin() {
 
 int cadastrarItem(){
 	
+    int i;
     char temp;
-    int codigoTemp, qtdTemp, i;
-    float precoTemp;
-    
-    if(contador >= 100){
-        printf("Limite de produtos atingido!\n");
-        return 0;
-    }
-    
-
+    struct produto produtos;
     // Validação do nome do produto
     do {
     	while (getchar() != '\n'); 
         printf("Digite o nome do produto: ");
-        fgets(produtos[contador].nome, sizeof(produtos[contador].nome), stdin);
-        produtos[contador].nome[strcspn(produtos[contador].nome, "\n")] = '\0';
+        fgets(produtos.nome, sizeof(produtos.nome), stdin);
+        produtos.nome[strcspn(produtos.nome, "\n")] = '\0';
         
-        if(strlen(produtos[contador].nome) == 0){
+        if(strlen(produtos.nome) == 0){
             printf("Erro: Nome do produto não pode estar vazio! Tente novamente.\n");
         } else {
             break; 
@@ -202,39 +194,56 @@ int cadastrarItem(){
     // Validação do código do produto
     do {
         printf("Digite o código do produto (número positivo): ");
-        if(scanf("%d", &codigoTemp) != 1) {
+        if(scanf("%d", &produtos.codigo) != 1) {
             printf("Erro: Digite apenas números!\n");
-            while (getchar() != '\n'); 
-            codigoTemp = -1; //caso o scanf falhe, codigoTemp valerá um valor anterior, então aqui ele é declarado como -1 pra forçar o erro e ser lido novamente
-        } else if(codigoTemp <= 0) {
+            while (getchar() != '\n'); // Limpa o buffer de entrada
+            continue; // Volta para o início do laço
+        }
+        
+        if(produtos.codigo <= 0) {
             printf("Erro: Código deve ser um número positivo!\n");
-        } else {
-            // Verifica se o código já existe
-            int codigoExiste = 0;
-            for(i = 0; i < contador; i++){
-                if(produtos[i].codigo == codigoTemp){
-                    printf("Erro: Este código já existe! Digite outro código.\n");
+            continue; // Volta para o início do laço
+        }
+
+        // ---- Início da validação de duplicidade embutida ----
+        FILE *arquivo;
+        int codigoExiste = 0;
+        
+        arquivo = fopen("produtos.txt", "r");
+        
+        // Só executa a verificação se o arquivo já existir
+        if (arquivo != NULL) {
+            char linha[200];
+            while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+                int codigoArquivo;
+                // Extrai o código da linha (o segundo valor, após o primeiro ';')
+                sscanf(linha, "%*[^;];%d", &codigoArquivo);
+
+                if (codigoArquivo == produtos.codigo) {
                     codigoExiste = 1;
-                    break;
+                    break; // Encontrou código duplicado, pode parar de ler
                 }
             }
-            if(!codigoExiste) {
-                produtos[contador].codigo = codigoTemp;
-                break;
-            }
+            fclose(arquivo); // Fecha o arquivo após a verificação
+        }
+        // ---- Fim da validação ----
+
+        if (codigoExiste) {
+            printf("Erro: Este código já existe! Digite outro código.\n");
+        } else {
+            break; // Código é válido e único, sai do laço
         }
     } while(1);
     
     // Validação do preço
     do {
         printf("Digite o preço do produto (valor positivo): R$ ");
-        if(scanf("%f", &precoTemp) != 1) {
+        if(scanf("%f", &produtos.preco) != 1) {
             printf("Erro: Digite um número válido!\n");
             while (getchar() != '\n'); 
-        } else if(precoTemp <= 0) {
+        } else if(produtos.preco <= 0) {
             printf("Erro: Preço deve ser maior que zero!\n");
         } else {
-            produtos[contador].preco = precoTemp;
             break;
         }
     } while(1);
@@ -242,13 +251,12 @@ int cadastrarItem(){
     // Validação da quantidade
     do {
         printf("Digite a quantidade do produto (número não negativo): ");
-        if(scanf("%d", &qtdTemp) != 1) {
+        if(scanf("%d", &produtos.qtd) != 1) {
             printf("Erro: Digite apenas números!\n");
             while (getchar() != '\n'); 
-        } else if(qtdTemp < 0) {
+        } else if(produtos.qtd < 0) {
             printf("Erro: Quantidade não pode ser negativa!\n");
         } else {
-            produtos[contador].qtd = qtdTemp;
             break;
         }
     } while(1);
@@ -260,10 +268,10 @@ int cadastrarItem(){
         scanf("%c", &temp);
         
         if(temp == 's' || temp == 'S'){
-            produtos[contador].generico = true;
+            produtos.generico = true;
             break;
         } else if(temp == 'n' || temp == 'N'){
-            produtos[contador].generico = false;
+            produtos.generico = false;
             break;
         } else {
             printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
@@ -277,10 +285,10 @@ int cadastrarItem(){
         scanf("%c", &temp);
         
         if(temp == 's' || temp == 'S'){
-            produtos[contador].generico = true;
+            produtos.generico = true;
             break;
         } else if(temp == 'n' || temp == 'N'){
-            produtos[contador].generico = false;
+            produtos.generico = false;
             break;
         } else {
             printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
@@ -288,17 +296,17 @@ int cadastrarItem(){
     } while(1);
     
     contador++; 
-    salvarProdutos();
+    
+	salvarProdutos(produtos.nome, produtos.codigo, produtos.qtd, produtos.preco, produtos.remedio, produtos.generico);
+    
     printf("\nProduto cadastrado com sucesso!\n");
 	system("pause");
 	system("cls");
     return 1;
 }
 
-void salvarProdutos(){
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio){
     FILE *arquivo;
-    
-    int i;
     
     arquivo = fopen("produtos.txt", "a");
     if(arquivo == NULL){
@@ -306,15 +314,14 @@ void salvarProdutos(){
         return;
     }
     
-    for(i = 0; i < contador; i++){
-        fprintf(arquivo, "%s;%d;%.2f;%d;%d;%d\n", 
-                produtos[i].nome, 
-                produtos[i].codigo, 
-                produtos[i].preco, 
-                produtos[i].qtd, 
-                produtos[i].remedio ? 1 : 0,
-                produtos[i].generico ? 1 : 0);
-    }
+    fprintf(arquivo, "%s;%d;%.2f;%d;%d;%d\n", 
+            nome, 
+            codigo, 
+            preco, 
+            qtd, 
+            remedio ? 1 : 0,
+            generico ? 1 : 0);
+    
     
     fclose(arquivo);
 }	
