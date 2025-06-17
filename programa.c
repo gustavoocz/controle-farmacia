@@ -12,6 +12,7 @@ int Verificarlogin();
 int Login();
 void Menu();
 int cadastrarItem();
+void salvarProdutos();
 
 //estrutura global
 struct produto{
@@ -270,11 +271,33 @@ int cadastrarItem(){
     } while(1);
     
     contador++; 
-    
+    salvarProdutos();
     printf("\nProduto cadastrado com sucesso!\n");
 	system("pause");
 	system("cls");
     return 1;
 }
 
+void salvarProdutos(){
+    FILE *arquivo;
+    
+    int i;
+    
+    arquivo = fopen("produtos.txt", "w");
+    if(arquivo == NULL){
+        printf("Erro ao abrir arquivo para salvar produtos!\n");
+        return;
+    }
+    
+    for(i = 0; i < contador; i++){
+        fprintf(arquivo, "%s;%d;%.2f;%d;%d\n", 
+                produtos[i].nome, 
+                produtos[i].codigo, 
+                produtos[i].preco, 
+                produtos[i].qtd, 
+                produtos[i].generico ? 1 : 0);
+    }
+    
+    fclose(arquivo);
+}
 
