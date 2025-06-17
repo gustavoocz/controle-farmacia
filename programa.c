@@ -300,7 +300,7 @@ void salvarProdutos(){
     
     int i;
     
-    arquivo = fopen("produtos.txt", "w");
+    arquivo = fopen("produtos.txt", "a");
     if(arquivo == NULL){
         printf("Erro ao abrir arquivo para salvar produtos!\n");
         return;
