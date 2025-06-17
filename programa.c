@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 //variaveis globais
 int login=0,nivelacesso=0;
@@ -10,9 +11,20 @@ int login=0,nivelacesso=0;
 int Verificarlogin();
 int Login();
 void Menu();
+int cadastrarItem();
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
 
+//estrutura global
+struct produto{
+	char nome[50];
+	int codigo, qtd;
+	float preco;
+	bool generico, remedio;
+};
+int contador = 0;
 
 void main(){
+	setlocale(LC_ALL, "Portuguese");
 	if(login!=1){
 		nivelacesso=Login();
 	}
@@ -27,7 +39,7 @@ void main(){
 
 void Menu(){
 	int op;
-	//ao final de todas as funï¿½ï¿½es, o main ou Menu devem ser chamados para dar continuidade ao programa
+	//ao final de todas as funções, o main ou Menu devem ser chamados para dar continuidade ao programa
 	if(nivelacesso==1){
 		//menu para o admin
 		printf("\n----- MENU ADMINISTRATIVO ------\n");
@@ -35,14 +47,15 @@ void Menu(){
 		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma opï¿½ï¿½o: ");
+		printf("Escolha uma opção: ");
 		scanf("%d",&op);
 		switch(op){
 			case 1:
 				printf("cadastro de clientes");
 				break;
 			case 2:
-				printf("cadastro de produtos");
+				cadastrarItem();
+				Menu();
 				break;
 			case 3:
 				printf("registrar venda");
@@ -61,7 +74,7 @@ void Menu(){
 		printf("1. Registrar venda\n2. Consulta\n3. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma opï¿½ï¿½o: ");
+		printf("Escolha uma opção: ");
 		scanf("%d",&op);
 		switch(op){
 			case 1:
@@ -82,10 +95,10 @@ int Login(){
 	int nivel;
 	nivel = Verificarlogin();
 	if(nivel==1){
-		printf("Permissï¿½o de admin concedida\n");
+		printf("Permissão de admin concedida\n");
 		login=1;
 	}else if(nivel==2){
-		printf("Permissao de vendedor concedida\n");
+		printf("Permissão de vendedor concedida\n");
 		login=1;
 	}else{
 		printf("Acesso negado");
@@ -124,7 +137,7 @@ int Verificarlogin() {
 		fgets(senha,sizeof(senha),stdin);
 		senha[strcspn(senha,"\n")]=0;
 
-    	// Lï¿½ linha por linha do arquivo
+    	// Lê linha por linha do arquivo
     		//reinicia a leitura do arquivo, permitindo as tentativas
     		rewind(arquivo);
     	while (fgets(linha, sizeof(linha), arquivo) != NULL) {
@@ -157,3 +170,158 @@ int Verificarlogin() {
     // Fecha o arquivo
     fclose(arquivo);
     return 0;
+}
+
+int cadastrarItem(){
+	
+    int i;
+    char temp;
+    struct produto produtos;
+    // Validação do nome do produto
+    do {
+    	while (getchar() != '\n'); 
+        printf("Digite o nome do produto: ");
+        fgets(produtos.nome, sizeof(produtos.nome), stdin);
+        produtos.nome[strcspn(produtos.nome, "\n")] = '\0';
+        
+        if(strlen(produtos.nome) == 0){
+            printf("Erro: Nome do produto não pode estar vazio! Tente novamente.\n");
+        } else {
+            break; 
+        }
+    } while(1);
+    
+    // Validação do código do produto
+    do {
+        printf("Digite o código do produto (número positivo): ");
+        if(scanf("%d", &produtos.codigo) != 1) {
+            printf("Erro: Digite apenas números!\n");
+            while (getchar() != '\n'); // Limpa o buffer de entrada
+            continue; // Volta para o início do laço
+        }
+        
+        if(produtos.codigo <= 0) {
+            printf("Erro: Código deve ser um número positivo!\n");
+            continue; // Volta para o início do laço
+        }
+
+        // ---- Início da validação de duplicidade embutida ----
+        FILE *arquivo;
+        int codigoExiste = 0;
+        
+        arquivo = fopen("produtos.txt", "r");
+        
+        // Só executa a verificação se o arquivo já existir
+        if (arquivo != NULL) {
+            char linha[200];
+            while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+                int codigoArquivo;
+                // Extrai o código da linha (o segundo valor, após o primeiro ';')
+                sscanf(linha, "%*[^;];%d", &codigoArquivo);
+
+                if (codigoArquivo == produtos.codigo) {
+                    codigoExiste = 1;
+                    break; // Encontrou código duplicado, pode parar de ler
+                }
+            }
+            fclose(arquivo); // Fecha o arquivo após a verificação
+        }
+        // ---- Fim da validação ----
+
+        if (codigoExiste) {
+            printf("Erro: Este código já existe! Digite outro código.\n");
+        } else {
+            break; // Código é válido e único, sai do laço
+        }
+    } while(1);
+    
+    // Validação do preço
+    do {
+        printf("Digite o preço do produto (valor positivo): R$ ");
+        if(scanf("%f", &produtos.preco) != 1) {
+            printf("Erro: Digite um número válido!\n");
+            while (getchar() != '\n'); 
+        } else if(produtos.preco <= 0) {
+            printf("Erro: Preço deve ser maior que zero!\n");
+        } else {
+            break;
+        }
+    } while(1);
+    
+    // Validação da quantidade
+    do {
+        printf("Digite a quantidade do produto (número não negativo): ");
+        if(scanf("%d", &produtos.qtd) != 1) {
+            printf("Erro: Digite apenas números!\n");
+            while (getchar() != '\n'); 
+        } else if(produtos.qtd < 0) {
+            printf("Erro: Quantidade não pode ser negativa!\n");
+        } else {
+            break;
+        }
+    } while(1);
+    
+    // Validação se é genérico
+    do {
+        printf("Ele é genérico? [s/n]: ");
+        while (getchar() != '\n'); 
+        scanf("%c", &temp);
+        
+        if(temp == 's' || temp == 'S'){
+            produtos.generico = true;
+            break;
+        } else if(temp == 'n' || temp == 'N'){
+            produtos.generico = false;
+            break;
+        } else {
+            printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
+        }
+    } while(1);
+    
+    // Validação se é remedio ou outro tipo de produto
+    do {
+        printf("É um remédio? [s/n]: ");
+        while (getchar() != '\n'); 
+        scanf("%c", &temp);
+        
+        if(temp == 's' || temp == 'S'){
+            produtos.generico = true;
+            break;
+        } else if(temp == 'n' || temp == 'N'){
+            produtos.generico = false;
+            break;
+        } else {
+            printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
+        }
+    } while(1);
+    
+    contador++; 
+    
+	salvarProdutos(produtos.nome, produtos.codigo, produtos.qtd, produtos.preco, produtos.remedio, produtos.generico);
+    
+    printf("\nProduto cadastrado com sucesso!\n");
+	system("pause");
+	system("cls");
+    return 1;
+}
+
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio){
+    FILE *arquivo;
+    
+    arquivo = fopen("produtos.txt", "a");
+    if(arquivo == NULL){
+        printf("Erro ao abrir arquivo para salvar produtos!\n");
+        return;
+    }
+    
+    fprintf(arquivo, "%s;%d;%.2f;%d;%d;%d\n", 
+            nome, 
+            codigo, 
+            preco, 
+            qtd, 
+            remedio ? 1 : 0,
+            generico ? 1 : 0);
+    
+    
+    fclose(arquivo);
+}	
