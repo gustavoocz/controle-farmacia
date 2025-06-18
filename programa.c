@@ -6,7 +6,7 @@
 #include <ctype.h>
 
 //variaveis globais
-int login=0, nivelacesso=0, contador = 0;
+int login=0, nivelacesso=0;
 
 //prototipos
 int Verificarlogin();
@@ -33,7 +33,7 @@ struct pessoa {
 	char nome[50], cpf[12], email[100];
 };
 
-void main(){
+int main(){
 	setlocale(LC_ALL, "Portuguese");
 	if(login!=1){
 		nivelacesso=Login();
@@ -44,6 +44,7 @@ void main(){
 		sleep(1);
 		Menu();
 	}
+	return 0;
 }
 
 
@@ -346,7 +347,7 @@ int cadastrarItem(){
     
     contador++; 
     
-	salvarProdutos(produtos.nome, produtos.codigo, produtos.qtd, produtos.preco, produtos.remedio, produtos.generico);
+	salvarProdutos(produtos.nome, produtos.codigo, produtos.qtd, produtos.preco, produtos.generico, produtos.remedio);
     
     printf("\nProduto cadastrado com sucesso!\n");
 	system("pause");
