@@ -20,6 +20,10 @@ void MenuConsulta();
 void ListarProdutos();
 void PesquisaProduto(char codigodigitado[]);
 void Pesquisacodigo();
+void ListarClientes();
+void Pesquisanome();
+void PesquisaCliente(char nomedigitado[]);
+void ProdutosBaixaqtd();
 
 //struct
 struct produto{
@@ -118,21 +122,24 @@ void MenuConsulta(){
 	getchar();
 	switch(op){
 		case 1:
-			printf("lista de clientes");
+			ListarClientes();
+			MenuConsulta();
 			break;
 		case 2:
 			ListarProdutos();//adicionar algo para esperar o enter do usuario para avançar e voltar ao menu principal
 			MenuConsulta();
 			break;
 		case 3:
-			printf("pesquisa de cliente");
+			Pesquisanome();
+			MenuConsulta();
 			break;
 		case 4:
 			Pesquisacodigo();
 			MenuConsulta();
 			break;
 		case 5:
-			printf("produtos em baixa");
+			ProdutosBaixaqtd();
+			MenuConsulta();
 			break;
 		case 6:
 			break;
@@ -446,10 +453,27 @@ void Pesquisacodigo(){
 	system("cls");
 	
 	char codigo[10];
+	bool codigocorreto = false;
+	do{
+		int i;
+		printf("Digite o código do produto desejado: ");
+		fgets(codigo,sizeof(codigo),stdin);
+		codigo[strcspn(codigo,"\n")]=0; 
+		for(i=0;i<strlen(codigo);i++){
+			if(isdigit(codigo[i])){
+				codigocorreto=true;
+			}else{
+				printf("Digite apenas números para o código do produto!\n");
+				codigocorreto=false;
+				break;
+			}
+		}
+		if(codigocorreto){
+			break;
+		}
+	}while(1);
 	
-	printf("Digite o código do produto desejado: ");
-	fgets(codigo,sizeof(codigo),stdin);
-	codigo[strcspn(codigo,"\n")]=0; 
+
 	PesquisaProduto(codigo);
 }
 
@@ -605,4 +629,231 @@ void salvarPessoa(char nome[50], char cpf[12], char email[100]){
     fprintf(arquivo, "%s;%s;%s\n", nome, cpf, email);
     
     fclose(arquivo);
+}
+
+
+void ListarClientes(){
+	system("cls");
+	
+	FILE *arquivo;
+    char linha[200];
+    char *nome, *cpf,*email;
+    int numcliente = 1;
+
+    // Abre o arquivo para leitura
+    arquivo = fopen("clientes.txt", "r");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para leitura! Verifique se o arquivo existe.\n");
+        system("pause");
+        return;
+    }
+
+    printf("\nLista dos clientes cadastrados:\n");
+    printf("----------------------------------\n");
+
+    // Lê linha por linha do arquivo
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        // Remove a quebra de linha
+        linha[strcspn(linha, "\n")] = 0;
+
+        // Separa os registros usando strtok
+        nome = strtok(linha, ";");
+        cpf = strtok(NULL, ";");
+        email = strtok(NULL,";");
+
+        if (nome != NULL && cpf != NULL && email!=NULL) {
+        	
+            printf("Cliente %d:\n", numcliente);
+            printf("  Nome: %s\n", nome);
+            printf("  CPF: %s\n", cpf);
+            printf("  Email: %s\n\n",email);
+
+        } else {
+            printf("Cliente %d: %s (formato inválido)\n", numcliente, linha);
+        }
+        numcliente++;
+    }
+
+    printf("----------------------------------\n");
+
+    fclose(arquivo);
+	
+	
+	system("pause");
+}
+
+void Pesquisanome(){
+	system("cls");
+	
+	char nome[100];
+	int i;
+	
+	
+	do{
+		bool nomecorreto = false;
+		printf("Digite o nome do cliente desejado: ");
+		fgets(nome,sizeof(nome),stdin);
+		nome[strcspn(nome,"\n")]=0;
+		
+		for(i=0;i<strlen(nome);i++){
+			if(!isalpha(nome[i])){
+				printf("Digite apenas letrar para o nome!\n");
+				nomecorreto=false;
+				break;
+			}else{
+				nomecorreto=true;
+			}
+		}
+		if(nomecorreto){
+			break;
+		}
+	}while(1);
+	//adicionar verificação
+	 
+	
+	for(i=0;i<strlen(nome);i++){
+		nome[i] = tolower(nome[i]);
+	}
+	
+	PesquisaCliente(nome);
+}
+
+void PesquisaCliente(char nomedigitado[]){
+	system("cls");
+	
+	FILE *arquivo;
+    char linha[200];
+    char *nome, *cpf,*email;
+    int numcliente=1;
+
+    // Abre o arquivo para leitura
+    arquivo = fopen("clientes.txt", "r");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para leitura! Verifique se o arquivo existe.\n");
+        system("pause");
+        return;
+    }
+
+    printf("Cliente(s) '%s' encontrado(s):\n",nomedigitado);
+    printf("----------------------------------\n");
+	bool clienteencontrado = false;
+
+    // Lê linha por linha do arquivo
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        // Remove a quebra de linha
+        linha[strcspn(linha, "\n")] = 0;
+        
+		nome = strtok(linha,";");
+		//Variavel para poder pesquisar nome sem se importar com maiusculo ou minusculo
+		char nomeformatado[100];
+		
+		//copia do nome cadastrado para minusculo
+		int i;
+		for(i=0;i<strlen(nome);i++){
+			nomeformatado[i] = tolower(nome[i]);
+		}
+		
+		//Analisa os nomes
+		if(strcmp(nomedigitado,nomeformatado)==0){
+			cpf = strtok(NULL,";");
+			email= strtok(NULL,";");
+
+	         if (nome != NULL && cpf != NULL && email!=NULL) {
+        	
+	            printf("Cliente %d:\n", numcliente);
+	            printf("  Nome: %s\n", nome); //Apresenta o nome salvo
+ 	      		printf("  CPF: %s\n", cpf);
+	            printf("  Email: %s\n\n",email);
+		            
+		        clienteencontrado=true;
+		        numcliente++;
+			}
+    	}
+	}
+	if(!clienteencontrado){
+		printf("Nenhum cliente foi encontrado!\n");
+	}
+	
+    printf("----------------------------------\n");
+
+    fclose(arquivo);
+	
+	
+	system("pause");
+	
+}
+
+
+void ProdutosBaixaqtd(){
+	system("cls");
+	
+	FILE *arquivo;
+    char linha[200];
+    char *nome, *codigo, *valor, *qtd, *gener, *remed;
+    int numproduto = 1;
+
+    // Abre o arquivo para leitura
+    arquivo = fopen("produtos.txt", "r");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para leitura! Verifique se o arquivo existe.\n");
+        system("pause");
+        return;
+    }
+
+    printf("\nLista dos produtos com baixa quantidade no estoque (<10):\n");
+    printf("-----------------------------------------------------------\n");
+
+    // Lê linha por linha do arquivo
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        // Remove a quebra de linha
+        linha[strcspn(linha, "\n")] = 0;
+
+        // Separa os registros usando strtok
+        nome = strtok(linha, ";");
+        codigo = strtok(NULL, ";");
+        valor = strtok(NULL,";");
+        qtd = strtok(NULL,";");
+        
+        if(atoi(qtd)<10){
+           remed = strtok(NULL, ";");
+ 	       gener = strtok(NULL,";");
+
+ 	       if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
+        	
+ 		       	if(strcmp(remed,"1")==0){
+  		      		remed= "Sim";
+				}else{
+					remed = "Não";
+				}
+				if(strcmp(gener,"1")==0){
+					gener = "Sim";
+				}else{
+					gener = "Não";
+				}
+        	
+  	          printf("Produto %d:\n", numproduto);
+ 	           printf("  Nome: %s\n", nome);
+ 	           printf("  Codigo: %s\n", codigo);
+ 	           printf("  Valor: %s\n",valor);
+ 	           printf("  Quantidade: %s\n",qtd);
+ 	           printf("  É um remédio?: %s\n",remed);
+  	        printf("  É genérico?: %s\n\n",gener);
+      	 	} else {
+      	      printf("Produto %d: %s (formato inválido)\n", numproduto, linha);
+     	   }
+ 	       numproduto++;
+		}
+        
+    }
+
+    printf("----------------------------------\n");
+
+    fclose(arquivo);
+	
+	
+	system("pause");
+	
 }
