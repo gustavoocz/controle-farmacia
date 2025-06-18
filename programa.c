@@ -388,7 +388,7 @@ void ListarProdutos(){
 	
 	FILE *arquivo;
     char linha[200];
-    char *nome, *codigo, *preco, *qtd, *gener, *remed;
+    char *nome, *codigo, *valor, *qtd, *gener, *remed;
     int numproduto = 1;
 
     // Abre o arquivo para leitura
@@ -411,12 +411,12 @@ void ListarProdutos(){
         // Separa os registros usando strtok
         nome = strtok(linha, ";");
         codigo = strtok(NULL, ";");
-        preco = strtok(NULL,";");
+        valor = strtok(NULL,";");
         qtd = strtok(NULL,";");
         remed = strtok(NULL, ";");
         gener = strtok(NULL,";");
 
-        if (nome != NULL && codigo != NULL && preco!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
+        if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
         	
         	if(strcmp(remed,"1")==0){
         		remed= "Sim";
@@ -432,7 +432,7 @@ void ListarProdutos(){
             printf("Produto %d:\n", numproduto);
             printf("  Nome: %s\n", nome);
             printf("  Codigo: %s\n", codigo);
-            printf("  Valor: %s\n",preco);
+            printf("  Valor: %s\n",valor);
             printf("  Quantidade: %s\n",qtd);
             printf("  É um remédio?: %s\n",remed);
             printf("  É genérico?: %s\n\n",gener);
@@ -505,7 +505,7 @@ void PesquisaProduto(char codigodigitado[]){
 		nome = strtok(linha,";");
 		codigo=strtok(NULL,";");
 		
-		if(strcmp(codigodigitado,codigo)==0){
+		if(codigo != NULL && strcmp(codigodigitado,codigo)==0){
 			valor = strtok(NULL,";");
        	 	qtd = strtok(NULL,";");
         	remed = strtok(NULL, ";");
@@ -734,7 +734,7 @@ void PesquisaCliente(char nomedigitado[]){
         return;
     }
 
-    printf("Cliente(s) '%s' encontrado(s):\n",nomedigitado);
+    printf("Cliente(s) '%s' encontrado(s):\n", nomedigitado);
     printf("----------------------------------\n");
 	bool clienteencontrado = false;
 
@@ -864,19 +864,60 @@ void registrarVenda() {
     bool produtoEncontrado = false,estoqueSuficiente = false;
 
     printf("--------- REGISTRO DE VENDA -----------\n");
-    printf("Digite o CPF do cliente (apenas números): ");
-    scanf("%11s", cpfCliente);
-    while (getchar() != '\n');
+    
+    do{
+    	printf("Digite o CPF do cliente (apenas números): ");
+   		scanf("%11s", cpfCliente);
+	    while (getchar() != '\n');
+		int i;
+		bool cpfcorreto=false;
+		
+		if(strlen(cpfCliente)!=11){
+			printf("Digite um CPF válido!\n");
+			cpfcorreto=false;
+		}else{
+			
+			for(i=0;i<strlen(cpfCliente);i++){
+			if(isdigit(cpfCliente[i])){
+				cpfcorreto=true;
+			}else{
+				printf("Digite apenas números para o CPF do cliente!\n");
+				cpfcorreto=false;
+				break;
+			}
+			}
+			if(cpfcorreto){
+				if (!validarCliente(cpfCliente)) {
+ 		     		 printf("\nERRO: Cliente com CPF '%s' não cadastrado!\n", cpfCliente);
+   		 		}else{
+    				break;
+				}
+			}
+		}
+		
+	}while(1);
+    
+    bool codigocorreto = false;
+	do{
+	    printf("Digite o código do produto: ");
+    	scanf("%s", codigoProduto);
+    	while (getchar() != '\n');
+    	int i;
+    	for(i=0;i<strlen(codigoProduto);i++){
+			if(isdigit(codigoProduto[i])){
+				codigocorreto=true;
+			}else{
+				printf("Digite apenas números para o código do produto!\n");
+				codigocorreto=false;
+				break;
+			}
+		}
+		if(codigocorreto){
+			break;
+		}
+    		
+	}while(1);
 
-    if (!validarCliente(cpfCliente)) {
-        printf("\nERRO: Cliente com CPF '%s' não cadastrado!\n", cpfCliente);
-        system("pause");
-        return;
-    }
-
-    printf("Digite o código do produto: ");
-    scanf("%s", codigoProduto);
-    while (getchar() != '\n');
 
     arquivoProdutos = fopen("produtos.txt", "r");
     arquivoTemp = fopen("produtos_temp.txt", "w"); // Arquivo temporário para reescrever os dados
@@ -919,7 +960,7 @@ void registrarVenda() {
                     novaQtd = qtdAtual - qtdVendida;
 
                     // Reescreve a linha do produto com a nova quantidade
-                    fprintf(arquivoTemp, "%s;%s;%.2f;%d;%s;%s\n", nome, codigo, preco, novaQtd, remedioStr, genericoStr);
+                    fprintf(arquivoTemp, "%s;%s;%.2f;%d;%s;%s", nome, codigo, preco, novaQtd, remedioStr, genericoStr);
 
                     // Abre o arquivo de vendas para adicionar o registro
                     arquivoVendas = fopen("vendas.txt", "a");
