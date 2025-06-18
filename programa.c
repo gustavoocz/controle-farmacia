@@ -388,7 +388,7 @@ void ListarProdutos(){
 	
 	FILE *arquivo;
     char linha[200];
-    char *nome, *codigo, *valor, *qtd, *gener, *remed;
+    char *nome, *codigo, *preco, *qtd, *gener, *remed;
     int numproduto = 1;
 
     // Abre o arquivo para leitura
@@ -416,7 +416,7 @@ void ListarProdutos(){
         remed = strtok(NULL, ";");
         gener = strtok(NULL,";");
 
-        if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
+        if (nome != NULL && codigo != NULL && preco!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
         	
         	if(strcmp(remed,"1")==0){
         		remed= "Sim";
@@ -432,7 +432,7 @@ void ListarProdutos(){
             printf("Produto %d:\n", numproduto);
             printf("  Nome: %s\n", nome);
             printf("  Codigo: %s\n", codigo);
-            printf("  Valor: %s\n",valor);
+            printf("  Valor: %s\n",preco);
             printf("  Quantidade: %s\n",qtd);
             printf("  É um remédio?: %s\n",remed);
             printf("  É genérico?: %s\n\n",gener);
