@@ -15,7 +15,8 @@ int cadastrarItem();
 void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
 void MenuConsulta();
 void ListarProdutos();
-
+void PesquisaProduto(char codigodigitado[]);
+void Pesquisacodigo();
 
 //struct
 struct produto{
@@ -75,7 +76,7 @@ void Menu(){
 		}
 	}else{
 		//menu para o vendedor
-		printf("\n------- MENU DE VENDAS ---------\n");
+		printf("------- MENU DE VENDAS ---------\n");
 		printf("--------------------------------\n");
 		printf("1. Registrar venda\n2. Consulta\n3. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
@@ -119,7 +120,8 @@ void MenuConsulta(){
 			printf("pesquisa de cliente");
 			break;
 		case 4:
-			printf("pesquisa produto");
+			Pesquisacodigo();
+			MenuConsulta();
 			break;
 		case 5:
 			printf("produtos em baixa");
@@ -435,4 +437,85 @@ void ListarProdutos(){
 	
 	
 	system("pause");
+}
+
+void Pesquisacodigo(){
+	system("cls");
+	
+	char codigo[10];
+	
+	printf("Digite o código do produto desejado: ");
+	fgets(codigo,sizeof(codigo),stdin);
+	codigo[strcspn(codigo,"\n")]=0; 
+	
+	PesquisaProduto(codigo);
+}
+
+void PesquisaProduto(char codigodigitado[]){
+	system("cls");
+	
+	FILE *arquivo;
+    char linha[200];
+    char *nome, *codigo, *valor, *qtd, *gener, *remed;
+    int numproduto = 1;
+
+    // Abre o arquivo para leitura
+    arquivo = fopen("produtos.txt", "r");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo para leitura! Verifique se o arquivo existe.\n");
+        return;
+    }
+
+    printf("\nProduto com código '%s':\n",codigodigitado);
+    printf("----------------------------------\n");
+
+    // Lê linha por linha do arquivo
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        // Remove a quebra de linha
+        linha[strcspn(linha, "\n")] = 0;
+		
+		nome = strtok(linha,";");
+		codigo=strtok(NULL,";");
+		
+		if(strcmp(codigodigitado,codigo)==0){
+			valor = strtok(NULL,";");
+       	 qtd = strtok(NULL,";");
+        	remed = strtok(NULL, ";");
+	        gener = strtok(NULL,";");
+
+	        if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
+        	
+	        	if(strcmp(remed,"1")==0){
+	        		remed= "Sim";
+				}else{
+					remed = "Não";
+				}
+				if(strcmp(gener,"1")==0){
+					gener = "Sim";
+				}else{
+					gener = "Não";
+				}
+			
+			
+				printf("  Nome: %s\n", nome);
+	            printf("  Codigo: %s\n", codigo);
+	            printf("  Valor: %s\n",valor);
+	            printf("  Quantidade: %s\n",qtd);
+	            printf("  É um remédio?: %s\n",remed);
+	            printf("  É genérico?: %s\n\n",gener);
+			}
+    	}else{
+    		printf("Nenhum produto foi encontrado!\n");
+    		break;
+		}
+	}
+
+    printf("----------------------------------\n");
+
+    fclose(arquivo);
+	
+	
+	system("pause");
+	
 }
