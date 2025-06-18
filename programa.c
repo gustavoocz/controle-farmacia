@@ -902,8 +902,8 @@ void registrarVenda() {
     	scanf("%s", codigoProduto);
     	while (getchar() != '\n');
     	int i;
-    	for(i=0;i<strlen(CódigoProduto);i++){
-			if(isdigit(CódigoProduto[i])){
+    	for(i=0;i<strlen(codigoProduto);i++){
+			if(isdigit(codigoProduto[i])){
 				codigocorreto=true;
 			}else{
 				printf("Digite apenas números para o código do produto!\n");
