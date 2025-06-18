@@ -12,20 +12,20 @@ int login=0, nivelacesso=0;
 int Verificarlogin();
 int Login();
 void Menu();
-int cadastrarItem();
-void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
-int cadastrarPessoa();
-void salvarPessoa(char nome[50], char cpf[12], char email[100]); 
 void MenuConsulta();
+int cadastrarItem();
+int cadastrarPessoa();
+void registrarVenda();
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
+void salvarPessoa(char nome[50], char cpf[12], char email[100]);
+int validarCliente(char cpfVerificar[]); 
 void ListarProdutos();
-void PesquisaProduto(char codigodigitado[]);
-void Pesquisacodigo();
 void ListarClientes();
-void Pesquisanome();
+void PesquisaProduto(char codigodigitado[]);
+void pesquisaCodigo();
+void pesquisaNome();
 void PesquisaCliente(char nomedigitado[]);
 void ProdutosBaixaqtd();
-void registrarVenda();
-int validarCliente(char cpfVerificar[]);
 
 //struct
 struct produto{
@@ -51,7 +51,6 @@ void main(){
 		Menu();
 	}
 }
-
 
 void Menu(){
 	system("cls");
@@ -89,7 +88,7 @@ void Menu(){
 				printf("\nSaindo...");sleep(1);printf(".....");
 				break;
 		}
-	}else{
+	} else {
 		//menu para o vendedor
 		printf("------- MENU DE VENDAS ---------\n");
 		printf("--------------------------------\n");
@@ -134,11 +133,11 @@ void MenuConsulta(){
 			MenuConsulta();
 			break;
 		case 3:
-			Pesquisanome();
+			pesquisaNome();
 			MenuConsulta();
 			break;
 		case 4:
-			Pesquisacodigo();
+			pesquisaCodigo();
 			MenuConsulta();
 			break;
 		case 5:
@@ -150,17 +149,18 @@ void MenuConsulta(){
 	}	
 }
 
-
 int Login(){
+	
 	int nivel;
+	
 	nivel = Verificarlogin();
 	if(nivel==1){
 		printf("Permiss√£o de admin concedida\n");
 		login=1;
-	}else if(nivel==2){
+	} else if (nivel==2){
 		printf("Permiss√£o de vendedor concedida\n");
 		login=1;
-	}else{
+	} else {
 		printf("Acesso negado");
 		//fecha o programa
 		return 0;
@@ -169,6 +169,7 @@ int Login(){
 }
 
 int Verificarlogin() {
+	
     FILE *arquivo;
     char linha[200];
     char *registro1, *registro2;
@@ -420,12 +421,12 @@ void ListarProdutos(){
         	
         	if(strcmp(remed,"1")==0){
         		remed= "Sim";
-			}else{
+			} else {
 				remed = "N„o";
 			}
 			if(strcmp(gener,"1")==0){
 				gener = "Sim";
-			}else{
+			} else {
 				gener = "N„o";
 			}
         	
@@ -449,7 +450,7 @@ void ListarProdutos(){
 	system("pause");
 }
 
-void Pesquisacodigo(){
+void pesquisaCodigo(){
 	system("cls");
 	
 	char codigo[10];
@@ -522,8 +523,7 @@ void PesquisaProduto(char codigodigitado[]){
 					gener = "Sim";
 				}else{
 					gener = "N„o";
-				}
-			
+				}			
 			
 				printf("  Nome: %s\n", nome);
 	            printf("  Codigo: %s\n", codigo);
@@ -630,7 +630,6 @@ void salvarPessoa(char nome[50], char cpf[12], char email[100]){
     fclose(arquivo);
 }
 
-
 void ListarClientes(){
 	system("cls");
 	
@@ -681,7 +680,7 @@ void ListarClientes(){
 	system("pause");
 }
 
-void Pesquisanome(){
+void pesquisaNome(){
 	system("cls");
 	
 	char nome[100];
