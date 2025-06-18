@@ -1,1 +1,5 @@
-
+CPF: 11111111111;Código: 12345;Produto: dipirona;Qtd vendida: 2;Valor unidade: 30,00;Total: 60,00
+CPF: 22222222222;Código: 234567;Produto: coca;Qtd vendida: 4;Valor unidade: 6,00;Total: 24,00
+CPF: 11111111111;Código: 234567;Produto: coca;Qtd vendida: 12;Valor unidade: 6,00;Total: 72,00
+CPF: 11111111111;Código: 9876;Produto: paracetamol;Qtd vendida: 4;Valor unidade: 55,00;Total: 220,00
+CPF: 11111111111;Código: 12345;Produto: dipirona;Qtd vendida: 8;Valor unidade: 30,00;Total: 240,00
