@@ -118,9 +118,9 @@ void MenuConsulta(){
 	system("cls");
 	printf("--------- MENU DE CONSULTA -----------\n");
 	printf("--------------------------------------\n");
-	printf("1. Listar clientes\n2. Listar produtos\n3. Pesquisar cliente (nome)\n4. Pesquisar produto (cÛdigo)\n5. Produtos em baixa no estoque\n6. Voltar ao Menu principal\n");
+	printf("1. Listar clientes\n2. Listar produtos\n3. Pesquisar cliente (nome)\n4. Pesquisar produto (c√≥digo)\n5. Produtos em baixa no estoque\n6. Voltar ao Menu principal\n");
 	printf("--------------------------------------\n");
-	printf("Escolha uma opÁ„o: ");
+	printf("Escolha uma op√ß√£o: ");
 	scanf("%d",&op);
 	getchar();
 	switch(op){
@@ -129,7 +129,7 @@ void MenuConsulta(){
 			MenuConsulta();
 			break;
 		case 2:
-			ListarProdutos();//adicionar algo para esperar o enter do usuario para avanÁar e voltar ao menu principal
+			ListarProdutos();//adicionar algo para esperar o enter do usuario para avan√ßar e voltar ao menu principal
 			MenuConsulta();
 			break;
 		case 3:
@@ -155,7 +155,7 @@ int Login(){
 	
 	nivel = Verificarlogin();
 	if(nivel==1){
-		printf("Permiss√£o de admin concedida\n");
+		printf("Permiss√£o de administrador concedida\n");
 		login=1;
 	} else if (nivel==2){
 		printf("Permiss√£o de vendedor concedida\n");
@@ -189,7 +189,7 @@ int Verificarlogin() {
 	    char usu[20];
 		char senha[10];
 		
-		printf("Digite o usuario: ");
+		printf("Digite o usu√°rio: ");
 		fgets(usu,sizeof(usu),stdin);
 		usu[strcspn(usu,"\n")] =0;
 		printf("Digite a senha: ");
@@ -237,30 +237,30 @@ int cadastrarItem(){
     int i;
     char temp;
     struct produto produtos;
-    // ValidaÁ„o do nome do produto
+    // Valida√ß√£o do nome do produto
     do { 
         printf("Digite o nome do produto: ");
         fgets(produtos.nome, sizeof(produtos.nome), stdin);
         produtos.nome[strcspn(produtos.nome, "\n")] = '\0';
         
         if(strlen(produtos.nome) == 0){
-            printf("Erro: Nome do produto n„o pode estar vazio! Tente novamente.\n");
+            printf("Erro: Nome do produto n√£o pode estar vazio! Tente novamente.\n");
         } else {
             break; 
         }
     } while(1);
     
-    // ValidaÁ„o do cÛdigo do produto
+    // Valida√ß√£o do c√≥digo do produto
     do {
-        printf("Digite o cÛdigo do produto (n˙mero positivo): ");
+        printf("Digite o c√≥digo do produto (n√∫mero positivo): ");
         if(scanf("%d", &produtos.codigo) != 1) {
-            printf("Erro: Digite apenas n˙meros!\n");
+            printf("Erro: Digite apenas n√∫meros!\n");
             while (getchar() != '\n'); // Limpa o buffer de entrada
             continue;
         }
         
         if(produtos.codigo <= 0) {
-            printf("Erro: CÛdigo deve ser um n˙mero positivo!\n");
+            printf("Erro: C√≥digo deve ser um n√∫mero positivo!\n");
             continue; 
         }
 
@@ -269,58 +269,58 @@ int cadastrarItem(){
         
         arquivo = fopen("produtos.txt", "r");
         
-        // SÛ executa a verificaÁ„o se o arquivo j· existir
+        // S√≥ executa a verifica√ß√£o se o arquivo j√° existir
         if (arquivo != NULL) {
             char linha[200];
             while (fgets(linha, sizeof(linha), arquivo) != NULL) {
                 int codigoArquivo;
-                // Extrai o cÛdigo da linha (o segundo valor, apÛs o primeiro ';')
+                // Extrai o c√≥digo da linha (o segundo valor, ap√≥s o primeiro ';')
                 sscanf(linha, "%*[^;];%d", &codigoArquivo);
 
                 if (codigoArquivo == produtos.codigo) {
                     codigoExiste = 1;
-                    break; // Encontrou cÛdigo duplicado, pode parar de ler
+                    break; // Encontrou c√≥digo duplicado, pode parar de ler
                 }
             }
-            fclose(arquivo); // Fecha o arquivo apÛs a verificaÁ„o
+            fclose(arquivo); // Fecha o arquivo ap√≥s a verifica√ß√£o
         }
 
         if (codigoExiste) {
-            printf("Erro: Este cÛdigo j· existe! Digite outro cÛdigo.\n");
+            printf("Erro: Este c√≥digo j√° existe! Digite outro c√≥digo.\n");
         } else {
-            break; // CÛdigo È v·lido e ˙nico, sai do laÁo
+            break; // C√≥digo √© v√°lido e √∫nico, sai do la√ßo
         }
     } while(1);
     
-    // ValidaÁ„o do preÁo
+    // Valida√ß√£o do pre√ßo
     do {
-        printf("Digite o preÁo do produto (valor positivo): R$ ");
+        printf("Digite o pre√ßo do produto (valor positivo): R$ ");
         if(scanf("%f", &produtos.preco) != 1) {
-            printf("Erro: Digite um n˙mero v·lido!\n");
+            printf("Erro: Digite um n√∫mero v√°lido!\n");
             while (getchar() != '\n'); 
         } else if(produtos.preco <= 0) {
-            printf("Erro: PreÁo deve ser maior que zero!\n");
+            printf("Erro: Pre√ßo deve ser maior que zero!\n");
         } else {
             break;
         }
     } while(1);
     
-    // ValidaÁ„o da quantidade
+    // Valida√ß√£o da quantidade
     do {
-        printf("Digite a quantidade do produto (n˙mero n„o negativo): ");
+        printf("Digite a quantidade do produto (n√∫mero n√£o negativo): ");
         if(scanf("%d", &produtos.qtd) != 1) {
-            printf("Erro: Digite apenas n˙meros!\n");
+            printf("Erro: Digite apenas n√∫meros!\n");
             while (getchar() != '\n'); 
         } else if(produtos.qtd < 0) {
-            printf("Erro: Quantidade n„o pode ser negativa!\n");
+            printf("Erro: Quantidade n√£o pode ser negativa!\n");
         } else {
             break;
         }
     } while(1);
     
-    // ValidaÁ„o se È remedio ou outro tipo de produto
+    // Valida√ß√£o se √© remedio ou outro tipo de produto
     do {
-        printf("… um remÈdio? [s/n]: ");
+        printf("√â um rem√©dio? [s/n]: ");
         while (getchar() != '\n'); 
         scanf("%c", &temp);
         
@@ -331,14 +331,14 @@ int cadastrarItem(){
             produtos.remedio = false;
             break;
         } else {
-            printf("Erro: Digite apenas 's' para sim ou 'n' para n„o!\n");
+            printf("Erro: Digite apenas 's' para sim ou 'n' para n√£o!\n");
         }
     } while(1);
     
-    // ValidaÔøΩÔøΩo se ÔøΩ genÔøΩrico
+    // Valida√ß√£o se √© gen√©rico
 	if(produtos.remedio){
 	    do {
-	        printf("Ele ÔøΩ genÔøΩrico? [s/n]: ");
+	        printf("Ele √© gen√©rico? [s/n]: ");
 	        while (getchar() != '\n'); 
 			scanf("%c", &temp);
 	       
@@ -349,7 +349,7 @@ int cadastrarItem(){
 	            produtos.generico = false;
 	            break;
 	        } else {
-	            printf("Erro: Digite apenas 's' para sim ou 'n' para nÔøΩo!\n");
+	            printf("Erro: Digite apenas 's' para sim ou 'n' para n√£o!\n");
 	        }
     	} while(1);
 	} else { 
@@ -404,7 +404,7 @@ void ListarProdutos(){
     printf("\nLista dos produtos cadastrados:\n");
     printf("----------------------------------\n");
 
-    // LÍ linha por linha do arquivo
+    // L√™ linha por linha do arquivo
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
         // Remove a quebra de linha
         linha[strcspn(linha, "\n")] = 0;
@@ -422,12 +422,12 @@ void ListarProdutos(){
         	if(strcmp(remed,"1")==0){
         		remed= "Sim";
 			} else {
-				remed = "N„o";
+				remed = "N√£o";
 			}
 			if(strcmp(gener,"1")==0){
 				gener = "Sim";
 			} else {
-				gener = "N„o";
+				gener = "N√£o";
 			}
         	
             printf("Produto %d:\n", numproduto);
@@ -435,10 +435,10 @@ void ListarProdutos(){
             printf("  Codigo: %s\n", codigo);
             printf("  Valor: %s\n",valor);
             printf("  Quantidade: %s\n",qtd);
-            printf("  … um remÈdio?: %s\n",remed);
-            printf("  … genÈrico?: %s\n\n",gener);
+            printf("  √â um rem√©dio?: %s\n",remed);
+            printf("  √â gen√©rico?: %s\n\n",gener);
         } else {
-            printf("Produto %d: %s (formato inv·lido)\n", numproduto, linha);
+            printf("Produto %d: %s (formato inv√°lido)\n", numproduto, linha);
         }
         numproduto++;
     }
@@ -458,14 +458,14 @@ void pesquisaCodigo(){
 	
 	do{
 		int i;
-		printf("Digite o cÛdigo do produto desejado: ");
+		printf("Digite o c√≥digo do produto desejado: ");
 		fgets(codigo,sizeof(codigo),stdin);
 		codigo[strcspn(codigo,"\n")]=0; 
 		for(i=0;i<strlen(codigo);i++){
 			if(isdigit(codigo[i])){
 				codigocorreto=true;
 			}else{
-				printf("Digite apenas n˙meros para o cÛdigo do produto!\n");
+				printf("Digite apenas n√∫meros para o c√≥digo do produto!\n");
 				codigocorreto=false;
 				break;
 			}
@@ -494,11 +494,11 @@ void PesquisaProduto(char codigodigitado[]){
         return;
     }
 
-    printf("\nProduto com cÛdigo '%s':\n",codigodigitado);
+    printf("\nProduto com c√≥digo '%s':\n",codigodigitado);
     printf("----------------------------------\n");
 	bool produtoencontrado = false;
 
-    // LÍ linha por linha do arquivo
+    // L√™ linha por linha do arquivo
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
         // Remove a quebra de linha
         linha[strcspn(linha, "\n")] = 0;
@@ -517,20 +517,20 @@ void PesquisaProduto(char codigodigitado[]){
 	        	if(strcmp(remed,"1")==0){
 	        		remed= "Sim";
 				}else{
-					remed = "N„o";
+					remed = "N√£o";
 				}
 				if(strcmp(gener,"1")==0){
 					gener = "Sim";
 				}else{
-					gener = "N„o";
+					gener = "N√£o";
 				}			
 			
 				printf("  Nome: %s\n", nome);
 	            printf("  Codigo: %s\n", codigo);
 	            printf("  Valor: %s\n",valor);
 	            printf("  Quantidade: %s\n",qtd);
-	            printf("  … um remÈdio?: %s\n",remed);
-	            printf("  … genÈrico?: %s\n\n",gener);
+	            printf("  √â um rem√©dio?: %s\n",remed);
+	            printf("  √â gen√©rico?: %s\n\n",gener);
 	            
 	            produtoencontrado=true;
 	            break;
@@ -555,20 +555,20 @@ int cadastrarPessoa(){
 	struct pessoa pessoas;
 	int i;
 	
-	// ValidaÁ„o do nome da pessoa
+	// Valida√ß√£o do nome da pessoa
     do {
         printf("Digite o nome do cliente: ");
         fgets(pessoas.nome, sizeof(pessoas.nome), stdin);
         pessoas.nome[strcspn(pessoas.nome, "\n")] = '\0';
 		        
         if(strlen(pessoas.nome) == 0){
-            printf("Erro: Nome do cliente n„o pode estar vazio! Tente novamente.\n");
+            printf("Erro: Nome do cliente n√£o pode estar vazio! Tente novamente.\n");
         } else {
             break; 
         }
     } while(1);
     
-    // ValidaÁ„o do cpf da pessoa
+    // Valida√ß√£o do cpf da pessoa
     do {
         printf("Digite o CPF do cliente: ");
         scanf("%s", pessoas.cpf);
@@ -587,20 +587,20 @@ int cadastrarPessoa(){
             }
         }
         if(!cpfValido){
-            printf("Erro: CPF inv·lido! Deve conter exatamente 11 dÌgitos numÈricos. Tente novamente.\n");
+            printf("Erro: CPF inv√°lido! Deve conter exatamente 11 d√≠gitos num√©ricos. Tente novamente.\n");
         } else {
             break; 
         }        
     } while(1);
  
-    // ValidaÁ„o do email da pessoa  
+    // Valida√ß√£o do email da pessoa  
     do {
         printf("Digite o email do cliente: ");
         fgets(pessoas.email, sizeof(pessoas.email), stdin);
         pessoas.email[strcspn(pessoas.email, "\n")] = '\0';
         
         if(strlen(pessoas.email) == 0){
-            printf("Erro: Email n„o pode estar vazio! Tente novamente.\n");
+            printf("Erro: Email n√£o pode estar vazio! Tente novamente.\n");
         } else {
             break; 
         }
@@ -650,7 +650,7 @@ void ListarClientes(){
     printf("\nLista dos clientes cadastrados:\n");
     printf("----------------------------------\n");
 
-    // LÍ linha por linha do arquivo
+    // L√™ linha por linha do arquivo
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
         // Remove a quebra de linha
         linha[strcspn(linha, "\n")] = 0;
@@ -668,7 +668,7 @@ void ListarClientes(){
             printf("  Email: %s\n\n",email);
 
         } else {
-            printf("Cliente %d: %s (formato inv·lido)\n", numcliente, linha);
+            printf("Cliente %d: %s (formato inv√°lido)\n", numcliente, linha);
         }
         numcliente++;
     }
@@ -706,7 +706,7 @@ void pesquisaNome(){
 			break;
 		}
 	}while(1);
-	//adicionar verificaÁ„o
+	//adicionar verifica√ß√£o
 	 
 	
 	for(i=0;i<strlen(nome);i++){
@@ -737,7 +737,7 @@ void PesquisaCliente(char nomedigitado[]){
     printf("----------------------------------\n");
 	bool clienteencontrado = false;
 
-    // LÍ linha por linha do arquivo
+    // L√™ linha por linha do arquivo
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
         // Remove a quebra de linha
         linha[strcspn(linha, "\n")] = 0;
@@ -804,7 +804,7 @@ void ProdutosBaixaqtd(){
     printf("\nLista dos produtos com baixa quantidade no estoque (<10):\n");
     printf("-----------------------------------------------------------\n");
 
-    // LÍ linha por linha do arquivo
+    // L√™ linha por linha do arquivo
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
         // Remove a quebra de linha
         linha[strcspn(linha, "\n")] = 0;
@@ -824,12 +824,12 @@ void ProdutosBaixaqtd(){
  		       	if(strcmp(remed,"1")==0){
   		      		remed= "Sim";
 				}else{
-					remed = "N„o";
+					remed = "N√£o";
 				}
 				if(strcmp(gener,"1")==0){
 					gener = "Sim";
 				}else{
-					gener = "N„o";
+					gener = "N√£o";
 				}
         	
   	          printf("Produto %d:\n", numproduto);
@@ -837,10 +837,10 @@ void ProdutosBaixaqtd(){
  	           printf("  Codigo: %s\n", codigo);
  	           printf("  Valor: %s\n",valor);
  	           printf("  Quantidade: %s\n",qtd);
- 	           printf("  … um remÈdio?: %s\n",remed);
-  	        printf("  … genÈrico?: %s\n\n",gener);
+ 	           printf("  √â um rem√©dio?: %s\n",remed);
+  	        printf("  √â gen√©rico?: %s\n\n",gener);
       	 	} else {
-      	      printf("Produto %d: %s (formato inv·lido)\n", numproduto, linha);
+      	      printf("Produto %d: %s (formato inv√°lido)\n", numproduto, linha);
      	   }
  	       numproduto++;
 		}
@@ -865,14 +865,14 @@ void registrarVenda() {
     printf("--------- REGISTRO DE VENDA -----------\n");
     
     do{
-    	printf("Digite o CPF do cliente (apenas n˙meros): ");
+    	printf("Digite o CPF do cliente (apenas n√∫meros): ");
    		scanf("%11s", cpfCliente);
 	    while (getchar() != '\n');
 		int i;
 		bool cpfcorreto=false;
 		
 		if(strlen(cpfCliente)!=11){
-			printf("Digite um CPF v·lido!\n");
+			printf("Digite um CPF v√°lido!\n");
 			cpfcorreto=false;
 		}else{
 			
@@ -880,14 +880,14 @@ void registrarVenda() {
 			if(isdigit(cpfCliente[i])){
 				cpfcorreto=true;
 			}else{
-				printf("Digite apenas n˙meros para o CPF do cliente!\n");
+				printf("Digite apenas n√∫meros para o CPF do cliente!\n");
 				cpfcorreto=false;
 				break;
 			}
 			}
 			if(cpfcorreto){
 				if (!validarCliente(cpfCliente)) {
- 		     		 printf("\nERRO: Cliente com CPF '%s' n„o cadastrado!\n", cpfCliente);
+ 		     		 printf("\nERRO: Cliente com CPF '%s' n√£o cadastrado!\n", cpfCliente);
    		 		}else{
     				break;
 				}
@@ -898,7 +898,7 @@ void registrarVenda() {
     
     bool codigocorreto = false;
 	do{
-	    printf("Digite o cÛdigo do produto: ");
+	    printf("Digite o c√≥digo do produto: ");
     	scanf("%s", codigoProduto);
     	while (getchar() != '\n');
     	int i;
@@ -906,7 +906,7 @@ void registrarVenda() {
 			if(isdigit(codigoProduto[i])){
 				codigocorreto=true;
 			}else{
-				printf("Digite apenas n˙meros para o cÛdigo do produto!\n");
+				printf("Digite apenas n√∫meros para o c√≥digo do produto!\n");
 				codigocorreto=false;
 				break;
 			}
@@ -919,10 +919,10 @@ void registrarVenda() {
 
 
     arquivoProdutos = fopen("produtos.txt", "r");
-    arquivoTemp = fopen("produtos_temp.txt", "w"); // Arquivo tempor·rio para reescrever os dados
+    arquivoTemp = fopen("produtos_temp.txt", "w"); // Arquivo tempor√°rio para reescrever os dados
 
     if (arquivoProdutos == NULL || arquivoTemp == NULL) {
-        printf("ERRO: N„o foi possÌvel abrir o arquivo de produtos.\n");
+        printf("ERRO: N√£o foi poss√≠vel abrir o arquivo de produtos.\n");
         if(arquivoProdutos) fclose(arquivoProdutos);
         if(arquivoTemp) fclose(arquivoTemp);
         system("pause");
@@ -964,7 +964,7 @@ void registrarVenda() {
                     // Abre o arquivo de vendas para adicionar o registro
                     arquivoVendas = fopen("vendas.txt", "a");
                     if (arquivoVendas != NULL) {
-                        fprintf(arquivoVendas, "CPF: %s;CÛdigo: %s;Produto: %s;Qtd vendida: %d;Valor unidade: %.2f;Total: %.2f\n",
+                        fprintf(arquivoVendas, "CPF: %s;C√≥digo: %s;Produto: %s;Qtd vendida: %d;Valor unidade: %.2f;Total: %.2f\n",
                                 cpfCliente, codigo, nome, qtdVendida, preco, preco * qtdVendida);
                         fclose(arquivoVendas);
                     }
@@ -972,7 +972,7 @@ void registrarVenda() {
                     printf("\nVenda registrada com sucesso!\n");
 
                 } else {
-                    printf("\nERRO: Quantidade inv·lida ou maior que o estoque!\n");
+                    printf("\nERRO: Quantidade inv√°lida ou maior que o estoque!\n");
                     fputs(linhaOriginal, arquivoTemp);
                 }
             } else {
@@ -988,8 +988,8 @@ void registrarVenda() {
     fclose(arquivoTemp);
 
     if (!produtoEncontrado) {
-        printf("\nERRO: Produto com cÛdigo '%s' n„o encontrado!\n", codigoProduto);
-        remove("produtos_temp.txt"); // Apaga o arquivo tempor·rio pois nada mudou
+        printf("\nERRO: Produto com c√≥digo '%s' n√£o encontrado!\n", codigoProduto);
+        remove("produtos_temp.txt"); // Apaga o arquivo tempor√°rio pois nada mudou
     } else if(estoqueSuficiente) {
         // substitui o arquivo antigo pelo novo
         remove("produtos.txt");
