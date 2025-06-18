@@ -16,13 +16,13 @@ void MenuConsulta();
 int cadastrarItem();
 int cadastrarPessoa();
 void registrarVenda();
-void salvarProdutos(char nome[50], int Código, int qtd, float preco, bool generico, bool remedio);
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
 void salvarPessoa(char nome[50], char cpf[12], char email[100]);
 int validarCliente(char cpfVerificar[]); 
 void ListarProdutos();
 void ListarClientes();
-void PesquisaProduto(char Códigodigitado[]);
-void pesquisaCódigo();
+void PesquisaProduto(char codigodigitado[]);
+void pesquisaCodigo();
 void pesquisaNome();
 void PesquisaCliente(char nomedigitado[]);
 void ProdutosBaixaqtd();
@@ -30,7 +30,7 @@ void ProdutosBaixaqtd();
 //struct
 struct produto{
 	char nome[50];
-	int Código, qtd;
+	int codigo, qtd;
 	float preco;
 	bool generico, remedio;
 };
@@ -137,7 +137,7 @@ void MenuConsulta(){
 			MenuConsulta();
 			break;
 		case 4:
-			pesquisaCódigo();
+			pesquisaCodigo();
 			MenuConsulta();
 			break;
 		case 5:
@@ -253,19 +253,19 @@ int cadastrarItem(){
     // Validação do código do produto
     do {
         printf("Digite o código do produto (número positivo): ");
-        if(scanf("%d", &produtos.Código) != 1) {
+        if(scanf("%d", &produtos.codigo) != 1) {
             printf("Erro: Digite apenas números!\n");
             while (getchar() != '\n'); // Limpa o buffer de entrada
             continue;
         }
         
-        if(produtos.Código <= 0) {
+        if(produtos.codigo <= 0) {
             printf("Erro: Código deve ser um número positivo!\n");
             continue; 
         }
 
         FILE *arquivo;
-        int CódigoExiste = 0;
+        int codigoExiste  = 0;
         
         arquivo = fopen("produtos.txt", "r");
         
@@ -273,19 +273,19 @@ int cadastrarItem(){
         if (arquivo != NULL) {
             char linha[200];
             while (fgets(linha, sizeof(linha), arquivo) != NULL) {
-                int CódigoArquivo;
+                int codigoArquivo;
                 // Extrai o código da linha (o segundo valor, após o primeiro ';')
-                sscanf(linha, "%*[^;];%d", &CódigoArquivo);
+                sscanf(linha, "%*[^;];%d", &codigoArquivo);
 
-                if (CódigoArquivo == produtos.Código) {
-                    CódigoExiste = 1;
+                if (codigoArquivo == produtos.codigo) {
+                    codigoExiste  = 1;
                     break; // Encontrou código duplicado, pode parar de ler
                 }
             }
             fclose(arquivo); // Fecha o arquivo após a verificação
         }
 
-        if (CódigoExiste) {
+        if (codigoExiste) {
             printf("Erro: Este código já existe! Digite outro código.\n");
         } else {
             break; // Código é válido e único, sai do laço
@@ -356,7 +356,7 @@ int cadastrarItem(){
 		produtos.generico = false;
 	}
     
-	salvarProdutos(produtos.nome, produtos.Código, produtos.qtd, produtos.preco, produtos.generico, produtos.remedio);
+	salvarProdutos(produtos.nome, produtos.codigo, produtos.qtd, produtos.preco, produtos.generico, produtos.remedio);
     
     printf("\nProduto cadastrado com sucesso!\n");
 	system("pause");
@@ -364,7 +364,7 @@ int cadastrarItem(){
     return 1;
 }
 
-void salvarProdutos(char nome[50], int Código, int qtd, float preco, bool generico, bool remedio){
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio){
 	FILE *arquivo;
 	    
 	arquivo = fopen("produtos.txt", "a");
@@ -375,7 +375,7 @@ void salvarProdutos(char nome[50], int Código, int qtd, float preco, bool gener
 	    
 	fprintf(arquivo, "%s;%d;%.2f;%d;%d;%d\n", 
 	        nome, 
-	        Código, 
+	        codigo, 
 	        preco, 
 	        qtd, 
 	        remedio ? 1 : 0,
@@ -389,7 +389,7 @@ void ListarProdutos(){
 	
 	FILE *arquivo;
     char linha[200];
-    char *nome, *Código, *valor, *qtd, *gener, *remed;
+    char *nome, *codigo, *valor, *qtd, *gener, *remed;
     int numproduto = 1;
 
     // Abre o arquivo para leitura
@@ -411,13 +411,13 @@ void ListarProdutos(){
 
         // Separa os registros usando strtok
         nome = strtok(linha, ";");
-        Código = strtok(NULL, ";");
+        codigo = strtok(NULL, ";");
         valor = strtok(NULL,";");
         qtd = strtok(NULL,";");
         remed = strtok(NULL, ";");
         gener = strtok(NULL,";");
 
-        if (nome != NULL && Código != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
+        if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
         	
         	if(strcmp(remed,"1")==0){
         		remed= "Sim";
@@ -432,7 +432,7 @@ void ListarProdutos(){
         	
             printf("Produto %d:\n", numproduto);
             printf("  Nome: %s\n", nome);
-            printf("  Código: %s\n", Código);
+            printf("  Código: %s\n", codigo);
             printf("  Valor: %s\n",valor);
             printf("  Quantidade: %s\n",qtd);
             printf("  É um remédio?: %s\n",remed);
@@ -450,40 +450,40 @@ void ListarProdutos(){
 	system("pause");
 }
 
-void pesquisaCódigo(){
+void pesquisaCodigo(){
 	system("cls");
 	
-	char Código[10];
-	bool Códigocorreto = true;
+	char codigo[10];
+	bool codigocorreto = true;
 	
 	do{
 		int i;
 		printf("Digite o código do produto desejado: ");
-		fgets(Código,sizeof(Código),stdin);
-		Código[strcspn(Código,"\n")]=0; 
-		for(i=0;i<strlen(Código);i++){
-			if(isdigit(Código[i])){
-				Códigocorreto=true;
+		fgets(codigo,sizeof(codigo),stdin);
+		codigo[strcspn(codigo,"\n")]=0; 
+		for(i=0;i<strlen(codigo);i++){
+			if(isdigit(codigo[i])){
+				codigocorreto=true;
 			}else{
 				printf("Digite apenas números para o código do produto!\n");
-				Códigocorreto=false;
+				codigocorreto=false;
 				break;
 			}
 		}
-		if(Códigocorreto){
+		if(codigocorreto){
 			break;
 		}
 	} while(1);
 
-	PesquisaProduto(Código);
+	PesquisaProduto(codigo);
 }
 
-void PesquisaProduto(char Códigodigitado[]){
+void PesquisaProduto(char codigodigitado[]){
 	system("cls");
 	
 	FILE *arquivo;
     char linha[200];
-    char *nome, *Código, *valor, *qtd, *gener, *remed;
+    char *nome, *codigo, *valor, *qtd, *gener, *remed;
 
     // Abre o arquivo para leitura
     arquivo = fopen("produtos.txt", "r");
@@ -494,7 +494,7 @@ void PesquisaProduto(char Códigodigitado[]){
         return;
     }
 
-    printf("\nProduto com código '%s':\n",Códigodigitado);
+    printf("\nProduto com código '%s':\n",codigodigitado);
     printf("----------------------------------\n");
 	bool produtoencontrado = false;
 
@@ -504,15 +504,15 @@ void PesquisaProduto(char Códigodigitado[]){
         linha[strcspn(linha, "\n")] = 0;
         
 		nome = strtok(linha,";");
-		Código=strtok(NULL,";");
+		codigo=strtok(NULL,";");
 		
-		if(Código != NULL && strcmp(Códigodigitado,Código)==0){
+		if(codigo != NULL && strcmp(codigodigitado,codigo)==0){
 			valor = strtok(NULL,";");
        	 	qtd = strtok(NULL,";");
         	remed = strtok(NULL, ";");
 	        gener = strtok(NULL,";");
 
-	        if (nome != NULL && Código != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
+	        if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
         	
 	        	if(strcmp(remed,"1")==0){
 	        		remed= "Sim";
@@ -526,7 +526,7 @@ void PesquisaProduto(char Códigodigitado[]){
 				}			
 			
 				printf("  Nome: %s\n", nome);
-	            printf("  Código: %s\n", Código);
+	            printf("  Código: %s\n", codigo);
 	            printf("  Valor: %s\n",valor);
 	            printf("  Quantidade: %s\n",qtd);
 	            printf("  É um remédio?: %s\n",remed);
@@ -789,7 +789,7 @@ void ProdutosBaixaqtd(){
 	
 	FILE *arquivo;
     char linha[200];
-    char *nome, *Código, *valor, *qtd, *gener, *remed;
+    char *nome, *codigo, *valor, *qtd, *gener, *remed;
     int numproduto = 1;
 
     // Abre o arquivo para leitura
@@ -811,7 +811,7 @@ void ProdutosBaixaqtd(){
 
         // Separa os registros usando strtok
         nome = strtok(linha, ";");
-        Código = strtok(NULL, ";");
+        codigo = strtok(NULL, ";");
         valor = strtok(NULL,";");
         qtd = strtok(NULL,";");
         
@@ -819,7 +819,7 @@ void ProdutosBaixaqtd(){
            remed = strtok(NULL, ";");
  	       gener = strtok(NULL,";");
 
- 	       if (nome != NULL && Código != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
+ 	       if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
         	
  		       	if(strcmp(remed,"1")==0){
   		      		remed= "Sim";
@@ -834,7 +834,7 @@ void ProdutosBaixaqtd(){
         	
   	          printf("Produto %d:\n", numproduto);
  	           printf("  Nome: %s\n", nome);
- 	           printf("  Código: %s\n", Código);
+ 	           printf("  Código: %s\n", codigo);
  	           printf("  Valor: %s\n",valor);
  	           printf("  Quantidade: %s\n",qtd);
  	           printf("  É um remédio?: %s\n",remed);
@@ -858,7 +858,7 @@ void registrarVenda() {
     system("cls"); 
     FILE *arquivoProdutos, *arquivoTemp, *arquivoVendas;
     
-	char cpfCliente[12], CódigoProduto[10], linha[200];
+	char cpfCliente[12], codigoProduto[10], linha[200];
     int qtdVendida, novaQtd;     
     bool produtoEncontrado = false,estoqueSuficiente = false;
 
@@ -896,22 +896,22 @@ void registrarVenda() {
 		
 	}while(1);
     
-    bool Códigocorreto = false;
+    bool codigocorreto = false;
 	do{
 	    printf("Digite o código do produto: ");
-    	scanf("%s", CódigoProduto);
+    	scanf("%s", codigoProduto);
     	while (getchar() != '\n');
     	int i;
     	for(i=0;i<strlen(CódigoProduto);i++){
 			if(isdigit(CódigoProduto[i])){
-				Códigocorreto=true;
+				codigocorreto=true;
 			}else{
 				printf("Digite apenas números para o código do produto!\n");
-				Códigocorreto=false;
+				codigocorreto=false;
 				break;
 			}
 		}
-		if(Códigocorreto){
+		if(codigocorreto){
 			break;
 		}
     		
@@ -934,9 +934,9 @@ void registrarVenda() {
         strcpy(linhaOriginal, linha);
 
         char *nome = strtok(linha, ";");
-        char *Código = strtok(NULL, ";");
+        char *codigo  = strtok(NULL, ";");
 
-        if (Código != NULL && strcmp(Código, CódigoProduto) == 0) {
+        if (codigo  != NULL && strcmp(codigo , codigoProduto) == 0) {
             produtoEncontrado = true;
 
             char* precoStr = strtok(NULL, ";");
@@ -959,13 +959,13 @@ void registrarVenda() {
                     novaQtd = qtdAtual - qtdVendida;
 
                     // Reescreve a linha do produto com a nova quantidade
-                    fprintf(arquivoTemp, "%s;%s;%.2f;%d;%s;%s", nome, Código, preco, novaQtd, remedioStr, genericoStr);
+                    fprintf(arquivoTemp, "%s;%s;%.2f;%d;%s;%s", nome, codigo, preco, novaQtd, remedioStr, genericoStr);
 
                     // Abre o arquivo de vendas para adicionar o registro
                     arquivoVendas = fopen("vendas.txt", "a");
                     if (arquivoVendas != NULL) {
                         fprintf(arquivoVendas, "CPF: %s;Código: %s;Produto: %s;Qtd vendida: %d;Valor unidade: %.2f;Total: %.2f\n",
-                                cpfCliente, Código, nome, qtdVendida, preco, preco * qtdVendida);
+                                cpfCliente, codigo, nome, qtdVendida, preco, preco * qtdVendida);
                         fclose(arquivoVendas);
                     }
 
@@ -988,7 +988,7 @@ void registrarVenda() {
     fclose(arquivoTemp);
 
     if (!produtoEncontrado) {
-        printf("\nERRO: Produto com código '%s' não encontrado!\n", CódigoProduto);
+        printf("\nERRO: Produto com código '%s' não encontrado!\n", codigoProduto);
         remove("produtos_temp.txt"); // Apaga o arquivo temporário pois nada mudou
     } else if(estoqueSuficiente) {
         // substitui o arquivo antigo pelo novo
