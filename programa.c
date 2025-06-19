@@ -87,6 +87,12 @@ void Menu(){
 			case 5:
 				printf("\nSaindo...");sleep(1);printf(".....");
 				break;
+			default:
+				printf("\nValor inválido. Tente novamente\n\n");
+				system("pause");
+				system("cls");
+				Menu();
+				break;
 		}
 	} else {
 		//menu para o vendedor
@@ -108,6 +114,12 @@ void Menu(){
 				break;
 			case 3:
 				printf("\nSaindo...");sleep(1);printf(".....");
+				break;
+			default:
+				printf("\nValor inválido. Tente novamente\n\n");
+				system("pause");
+				system("cls");
+				Menu();
 				break;
 		}
 	}
@@ -145,6 +157,12 @@ void MenuConsulta(){
 			MenuConsulta();
 			break;
 		case 6:
+			break;
+		default:
+			printf("\nValor inválido. Tente novamente\n\n");
+			system("pause");
+			system("cls");
+			MenuConsulta();
 			break;
 	}	
 }
