@@ -4,3 +4,4 @@ CPF: 13131313131;Código: 10;Produto: Sorvete;Qtd vendida: 1;Valor unidade: 19,90
 CPF: 13131313131;Código: 2;Produto: Dipirona;Qtd vendida: 30;Valor unidade: 43,50;Total: 1305,00
 CPF: 13131313131;Código: 5;Produto: gelatina;Qtd vendida: 2;Valor unidade: 3,50;Total: 7,00
 CPF: 13131313131;Código: 7;Produto: geleia;Qtd vendida: 4;Valor unidade: 5,70;Total: 22,80
+CPF: 13131313131;Código: 1;Produto: pereva;Qtd vendida: 2;Valor unidade: 32,00;Total: 64,00

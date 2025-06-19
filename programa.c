@@ -12,20 +12,20 @@ int login=0, nivelacesso=0;
 int Verificarlogin();
 int Login();
 void Menu();
-int cadastrarItem();
-void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
-int cadastrarPessoa();
-void salvarPessoa(char nome[50], char cpf[12], char email[100]); 
 void MenuConsulta();
+int cadastrarItem();
+int cadastrarPessoa();
+void registrarVenda();
+void salvarProdutos(char nome[50], int codigo, int qtd, float preco, bool generico, bool remedio);
+void salvarPessoa(char nome[50], char cpf[12], char email[100]);
+int validarCliente(char cpfVerificar[]); 
 void ListarProdutos();
-void PesquisaProduto(char codigodigitado[]);
-void Pesquisacodigo();
 void ListarClientes();
-void Pesquisanome();
+void PesquisaProduto(char codigodigitado[]);
+void pesquisaCodigo();
+void pesquisaNome();
 void PesquisaCliente(char nomedigitado[]);
 void ProdutosBaixaqtd();
-void registrarVenda();
-int validarCliente(char cpfVerificar[]);
 
 //struct
 struct produto{
@@ -52,12 +52,11 @@ void main(){
 	}
 }
 
-
 void Menu(){
 	system("cls");
 	int op;
 
-	//ao final de todas as funÃ§Ãµes, o main ou Menu devem ser chamados para dar continuidade ao programa
+	//ao final de todas as funções, o main ou Menu devem ser chamados para dar continuidade ao programa
 	if(nivelacesso==1){
 		//menu para o admin
 		printf("----- MENU ADMINISTRATIVO ------\n");
@@ -65,7 +64,7 @@ void Menu(){
 		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma opÃ§Ã£o: ");
+		printf("Escolha uma opção: ");
 		scanf("%d",&op);
 		getchar();
 		switch(op){
@@ -88,15 +87,21 @@ void Menu(){
 			case 5:
 				printf("\nSaindo...");sleep(1);printf(".....");
 				break;
+			default:
+				printf("\nValor inválido. Tente novamente\n\n");
+				system("pause");
+				system("cls");
+				Menu();
+				break;
 		}
-	}else{
+	} else {
 		//menu para o vendedor
 		printf("------- MENU DE VENDAS ---------\n");
 		printf("--------------------------------\n");
 		printf("1. Registrar venda\n2. Consulta\n3. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
-		printf("Escolha uma opÃ§Ã£o: ");
+		printf("Escolha uma opção: ");
 		scanf("%d",&op);
 		switch(op){
 			case 1:
@@ -109,6 +114,12 @@ void Menu(){
 				break;
 			case 3:
 				printf("\nSaindo...");sleep(1);printf(".....");
+				break;
+			default:
+				printf("\nValor inválido. Tente novamente\n\n");
+				system("pause");
+				system("cls");
+				Menu();
 				break;
 		}
 	}
@@ -134,11 +145,11 @@ void MenuConsulta(){
 			MenuConsulta();
 			break;
 		case 3:
-			Pesquisanome();
+			pesquisaNome();
 			MenuConsulta();
 			break;
 		case 4:
-			Pesquisacodigo();
+			pesquisaCodigo();
 			MenuConsulta();
 			break;
 		case 5:
@@ -147,20 +158,27 @@ void MenuConsulta(){
 			break;
 		case 6:
 			break;
+		default:
+			printf("\nValor inválido. Tente novamente\n\n");
+			system("pause");
+			system("cls");
+			MenuConsulta();
+			break;
 	}	
 }
 
-
 int Login(){
+	
 	int nivel;
+	
 	nivel = Verificarlogin();
 	if(nivel==1){
-		printf("PermissÃ£o de admin concedida\n");
+		printf("Permissão de administrador concedida\n");
 		login=1;
-	}else if(nivel==2){
-		printf("PermissÃ£o de vendedor concedida\n");
+	} else if (nivel==2){
+		printf("Permissão de vendedor concedida\n");
 		login=1;
-	}else{
+	} else {
 		printf("Acesso negado");
 		//fecha o programa
 		return 0;
@@ -169,6 +187,7 @@ int Login(){
 }
 
 int Verificarlogin() {
+	
     FILE *arquivo;
     char linha[200];
     char *registro1, *registro2;
@@ -188,14 +207,14 @@ int Verificarlogin() {
 	    char usu[20];
 		char senha[10];
 		
-		printf("Digite o usuario: ");
+		printf("Digite o usuário: ");
 		fgets(usu,sizeof(usu),stdin);
 		usu[strcspn(usu,"\n")] =0;
 		printf("Digite a senha: ");
 		fgets(senha,sizeof(senha),stdin);
 		senha[strcspn(senha,"\n")]=0;
 
-    	// LÃª linha por linha do arquivo
+    	// Lê linha por linha do arquivo
     	//reinicia a leitura do arquivo, permitindo as tentativas
     	rewind(arquivo);
     	while (fgets(linha, sizeof(linha), arquivo) != NULL) {
@@ -264,7 +283,7 @@ int cadastrarItem(){
         }
 
         FILE *arquivo;
-        int codigoExiste = 0;
+        int codigoExiste  = 0;
         
         arquivo = fopen("produtos.txt", "r");
         
@@ -277,7 +296,7 @@ int cadastrarItem(){
                 sscanf(linha, "%*[^;];%d", &codigoArquivo);
 
                 if (codigoArquivo == produtos.codigo) {
-                    codigoExiste = 1;
+                    codigoExiste  = 1;
                     break; // Encontrou código duplicado, pode parar de ler
                 }
             }
@@ -334,10 +353,10 @@ int cadastrarItem(){
         }
     } while(1);
     
-    // Validaï¿½ï¿½o se ï¿½ genï¿½rico
+    // Validação se é genérico
 	if(produtos.remedio){
 	    do {
-	        printf("Ele ï¿½ genï¿½rico? [s/n]: ");
+	        printf("Ele é genérico? [s/n]: ");
 	        while (getchar() != '\n'); 
 			scanf("%c", &temp);
 	       
@@ -348,7 +367,7 @@ int cadastrarItem(){
 	            produtos.generico = false;
 	            break;
 	        } else {
-	            printf("Erro: Digite apenas 's' para sim ou 'n' para nï¿½o!\n");
+	            printf("Erro: Digite apenas 's' para sim ou 'n' para não!\n");
 	        }
     	} while(1);
 	} else { 
@@ -420,18 +439,18 @@ void ListarProdutos(){
         	
         	if(strcmp(remed,"1")==0){
         		remed= "Sim";
-			}else{
+			} else {
 				remed = "Não";
 			}
 			if(strcmp(gener,"1")==0){
 				gener = "Sim";
-			}else{
+			} else {
 				gener = "Não";
 			}
         	
             printf("Produto %d:\n", numproduto);
             printf("  Nome: %s\n", nome);
-            printf("  Codigo: %s\n", codigo);
+            printf("  Código: %s\n", codigo);
             printf("  Valor: %s\n",valor);
             printf("  Quantidade: %s\n",qtd);
             printf("  É um remédio?: %s\n",remed);
@@ -449,7 +468,7 @@ void ListarProdutos(){
 	system("pause");
 }
 
-void Pesquisacodigo(){
+void pesquisaCodigo(){
 	system("cls");
 	
 	char codigo[10];
@@ -505,7 +524,7 @@ void PesquisaProduto(char codigodigitado[]){
 		nome = strtok(linha,";");
 		codigo=strtok(NULL,";");
 		
-		if(strcmp(codigodigitado,codigo)==0){
+		if(codigo != NULL && strcmp(codigodigitado,codigo)==0){
 			valor = strtok(NULL,";");
        	 	qtd = strtok(NULL,";");
         	remed = strtok(NULL, ";");
@@ -522,11 +541,10 @@ void PesquisaProduto(char codigodigitado[]){
 					gener = "Sim";
 				}else{
 					gener = "Não";
-				}
-			
+				}			
 			
 				printf("  Nome: %s\n", nome);
-	            printf("  Codigo: %s\n", codigo);
+	            printf("  Código: %s\n", codigo);
 	            printf("  Valor: %s\n",valor);
 	            printf("  Quantidade: %s\n",qtd);
 	            printf("  É um remédio?: %s\n",remed);
@@ -630,7 +648,6 @@ void salvarPessoa(char nome[50], char cpf[12], char email[100]){
     fclose(arquivo);
 }
 
-
 void ListarClientes(){
 	system("cls");
 	
@@ -681,7 +698,7 @@ void ListarClientes(){
 	system("pause");
 }
 
-void Pesquisanome(){
+void pesquisaNome(){
 	system("cls");
 	
 	char nome[100];
@@ -734,7 +751,7 @@ void PesquisaCliente(char nomedigitado[]){
         return;
     }
 
-    printf("Cliente(s) '%s' encontrado(s):\n",nomedigitado);
+    printf("Cliente(s) '%s' encontrado(s):\n", nomedigitado);
     printf("----------------------------------\n");
 	bool clienteencontrado = false;
 
@@ -835,7 +852,7 @@ void ProdutosBaixaqtd(){
         	
   	          printf("Produto %d:\n", numproduto);
  	           printf("  Nome: %s\n", nome);
- 	           printf("  Codigo: %s\n", codigo);
+ 	           printf("  Código: %s\n", codigo);
  	           printf("  Valor: %s\n",valor);
  	           printf("  Quantidade: %s\n",qtd);
  	           printf("  É um remédio?: %s\n",remed);
@@ -935,9 +952,9 @@ void registrarVenda() {
         strcpy(linhaOriginal, linha);
 
         char *nome = strtok(linha, ";");
-        char *codigo = strtok(NULL, ";");
+        char *codigo  = strtok(NULL, ";");
 
-        if (codigo != NULL && strcmp(codigo, codigoProduto) == 0) {
+        if (codigo  != NULL && strcmp(codigo , codigoProduto) == 0) {
             produtoEncontrado = true;
 
             char* precoStr = strtok(NULL, ";");
@@ -960,7 +977,7 @@ void registrarVenda() {
                     novaQtd = qtdAtual - qtdVendida;
 
                     // Reescreve a linha do produto com a nova quantidade
-                    fprintf(arquivoTemp, "%s;%s;%.2f;%d;%s;%s\n", nome, codigo, preco, novaQtd, remedioStr, genericoStr);
+                    fprintf(arquivoTemp, "%s;%s;%.2f;%d;%s;%s", nome, codigo, preco, novaQtd, remedioStr, genericoStr);
 
                     // Abre o arquivo de vendas para adicionar o registro
                     arquivoVendas = fopen("vendas.txt", "a");
