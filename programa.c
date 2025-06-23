@@ -29,6 +29,7 @@ void PesquisaCliente(char nomedigitado[]);
 void ProdutosBaixaqtd();
 void DeletarCliente();
 void DeletarProduto();
+void deletarVenda();
 
 //struct
 struct produto{
@@ -64,8 +65,7 @@ void Menu(){
 		//menu para o admin
 		printf("----- MENU ADMINISTRATIVO ------\n");
 		printf("--------------------------------\n");
-		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Deletar cliente\n6. Deletar produto\n7. Sair do programa\n");
-		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
+		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Deletar cliente\n6. Deletar produto\n7. Deletar venda\n8. Sair do programa\n");
 		printf("--------------------------------\n");
 		printf("Escolha uma opção: ");
 		scanf("%d",&op);
@@ -96,14 +96,12 @@ void Menu(){
 				Menu();
 				break;
 			case 7:
-				printf("\nSaindo...");sleep(1);printf(".....");
-				break;
-			default:
-				printf("\nValor inválido. Tente novamente\n\n");
-				system("pause");
-				system("cls");
-				Menu();
-				break;
+    				deletarVenda();
+    				Menu();
+    				break;
+			case 8:  
+    				printf("\nSaindo...");sleep(1);printf(".....");
+   			 	break;
 		}
 	} else {
 		//menu para o vendedor
@@ -1244,5 +1242,87 @@ void listarVendas(){
     }
 
     fclose(arquivo);
+    system("pause");
+}
+
+void deletarVenda(){
+    system("cls");
+    
+    FILE *arquivoVendas, *tempVendas;
+    char linha[200];
+    int numeroVenda, contadorVenda = 1;
+    bool exclusaoCorreta = false;
+    
+    printf("===== VENDAS REGISTRADAS =====\n");
+    printf("-------------------------------\n");
+    
+    arquivoVendas = fopen("vendas.txt", "r");
+    if (arquivoVendas == NULL) {
+        printf("Nenhuma venda registrada ou erro ao abrir arquivo!\n");
+        system("pause");
+        return;
+    }
+    
+    while (fgets(linha, sizeof(linha), arquivoVendas) != NULL) {
+        linha[strcspn(linha, "\n")] = 0;
+        printf("Venda %d: %s\n", contadorVenda, linha);
+        contadorVenda++;
+    }
+    fclose(arquivoVendas);
+    
+    if (contadorVenda == 1) {
+        printf("Nenhuma venda encontrada!\n");
+        system("pause");
+        return;
+    }
+    
+    printf("-------------------------------\n");
+    
+    do {
+        printf("Digite o número da venda a ser excluída (1 a %d): ", contadorVenda - 1);
+        scanf("%d", &numeroVenda);
+        while (getchar() != '\n');
+        
+        if (numeroVenda < 1 || numeroVenda >= contadorVenda) {
+            printf("Número inválido! Digite um número entre 1 e %d.\n", contadorVenda - 1);
+        } else {
+            break;
+        }
+    } while(1);
+    
+    arquivoVendas = fopen("vendas.txt", "r");
+    tempVendas = fopen("tempvendas.txt", "w");
+    
+    if (arquivoVendas == NULL || tempVendas == NULL) {
+        printf("ERRO: Não foi possível abrir o arquivo de vendas.\n");
+        if(arquivoVendas) fclose(arquivoVendas);
+        if(tempVendas) fclose(tempVendas);
+        system("pause");
+        return;
+    }
+    
+    contadorVenda = 1;
+    
+    // Copia todas as vendas exceto a que deve ser excluída
+    while (fgets(linha, sizeof(linha), arquivoVendas) != NULL) {
+        if (contadorVenda != numeroVenda) {
+            fputs(linha, tempVendas);
+        } else {
+            exclusaoCorreta = true;
+            printf("\nVenda %d excluída com sucesso!\n", numeroVenda);
+        }
+        contadorVenda++;
+    }
+    
+    fclose(arquivoVendas);
+    fclose(tempVendas);
+    
+    if (exclusaoCorreta) {
+        remove("vendas.txt");
+        rename("tempvendas.txt", "vendas.txt");
+    } else {
+        remove("tempvendas.txt");
+    }
+    
     system("pause");
 }
