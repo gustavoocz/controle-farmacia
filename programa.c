@@ -21,11 +21,14 @@ void salvarPessoa(char nome[50], char cpf[12], char email[100]);
 int validarCliente(char cpfVerificar[]); 
 void ListarProdutos();
 void ListarClientes();
+void listarVendas();
 void PesquisaProduto(char codigodigitado[]);
 void pesquisaCodigo();
 void pesquisaNome();
 void PesquisaCliente(char nomedigitado[]);
 void ProdutosBaixaqtd();
+void DeletarCliente();
+void DeletarProduto();
 
 //struct
 struct produto{
@@ -61,7 +64,7 @@ void Menu(){
 		//menu para o admin
 		printf("----- MENU ADMINISTRATIVO ------\n");
 		printf("--------------------------------\n");
-		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Sair do programa\n");
+		printf("1. Cadastrar cliente\n2. Cadastrar produto\n3. Registrar venda\n4. Consulta\n5. Deletar cliente\n6. Deletar produto\n7. Sair do programa\n");
 		//em consulta adicionar listagem de clientes e produtos, pesquisa de ambos e produtos em baixa qtd
 		printf("--------------------------------\n");
 		printf("Escolha uma opção: ");
@@ -85,6 +88,14 @@ void Menu(){
 				Menu();
 				break;
 			case 5:
+				DeletarCliente();
+				Menu();
+				break;
+			case 6:
+				DeletarProduto();
+				Menu();
+				break;
+			case 7:
 				printf("\nSaindo...");sleep(1);printf(".....");
 				break;
 			default:
@@ -130,7 +141,7 @@ void MenuConsulta(){
 	system("cls");
 	printf("--------- MENU DE CONSULTA -----------\n");
 	printf("--------------------------------------\n");
-	printf("1. Listar clientes\n2. Listar produtos\n3. Pesquisar cliente (nome)\n4. Pesquisar produto (código)\n5. Produtos em baixa no estoque\n6. Voltar ao Menu principal\n");
+	printf("1. Listar clientes\n2. Listar produtos\n3. Listar vendas\n4. Pesquisar cliente (nome)\n5. Pesquisar produto (código)\n6. Produtos em baixa no estoque\n7. Voltar ao Menu principal\n");
 	printf("--------------------------------------\n");
 	printf("Escolha uma opção: ");
 	scanf("%d",&op);
@@ -141,22 +152,26 @@ void MenuConsulta(){
 			MenuConsulta();
 			break;
 		case 2:
-			ListarProdutos();//adicionar algo para esperar o enter do usuario para avançar e voltar ao menu principal
+			ListarProdutos();
 			MenuConsulta();
 			break;
 		case 3:
-			pesquisaNome();
+			listarVendas();
 			MenuConsulta();
 			break;
 		case 4:
-			pesquisaCodigo();
+			pesquisaNome();
 			MenuConsulta();
 			break;
 		case 5:
-			ProdutosBaixaqtd();
+			pesquisaCodigo();
 			MenuConsulta();
 			break;
 		case 6:
+			ProdutosBaixaqtd();
+			MenuConsulta();
+			break;
+		case 7:
 			break;
 		default:
 			printf("\nValor inválido. Tente novamente\n\n");
@@ -1039,4 +1054,195 @@ int validarCliente(char cpfVerificar[]) {
 
     fclose(arquivo);
     return 0;
+}
+
+
+void DeletarCliente(){
+	system("cls");
+	
+	FILE *arquivocliente,*tempcliente;
+	char cpf[12], linha[200];
+	bool exclusaocorreta=false;
+	
+	do{
+		printf("Digite o CPF do cliente a ser excluído: ");
+		fgets(cpf,sizeof(cpf),stdin);
+		cpf[strcspn(cpf,"\n")]=0;
+		int i;
+		bool cpfcorreto = false;
+		for(i=0;i<strlen(cpf);i++){
+			if(!isdigit(cpf[i])){
+				printf("Digite apenas números para o cpf!\n");
+				cpfcorreto=false;
+				break;
+			}else{
+				cpfcorreto=true;
+			}
+		}
+		if(cpfcorreto){
+			if (!validarCliente(cpf)) {
+ 		     		printf("\nERRO: Cliente com CPF '%s' não foi encontrado!\n", cpf);
+   		 		}else{
+    				break;
+				}
+		}
+	}while(1);
+	
+	arquivocliente = fopen("clientes.txt","r");
+	tempcliente = fopen("tempcliente.txt","w");
+	
+    if (arquivocliente == NULL || tempcliente == NULL) {
+        printf("ERRO: Não foi possível abrir o arquivo de clientes.\n");
+        if(arquivocliente) fclose(arquivocliente);
+        if(tempcliente) fclose(tempcliente);
+        system("pause");
+        return;
+    }
+    
+    while (fgets(linha, sizeof(linha), arquivocliente) != NULL) {
+        char linhaOriginal[200];
+        strcpy(linhaOriginal, linha);
+
+        char *nome = strtok(linha, ";");
+        char *cpf_  = strtok(NULL, ";");
+
+        if (strcmp(cpf_ , cpf) == 0) {
+            exclusaocorreta = true;
+
+            printf("\nExclusão concluída!\n");                            
+        } else {
+            fputs(linhaOriginal, tempcliente); 
+        }
+    }
+    fclose(arquivocliente);
+    fclose(tempcliente);
+
+    if (!exclusaocorreta) {
+        remove("tempcliente.txt");
+    }else {
+        remove("clientes.txt");
+        rename("tempcliente.txt","clientes.txt");
+    }
+
+    system("pause");
+}
+
+void DeletarProduto(){
+	system("cls");
+	
+	FILE *arquivoprodutos,*tempprodutos;
+	char codigo[10], linha[200];
+	bool exclusaocorreta=false,produtoencontrado=false;
+	
+	do{
+		printf("Digite o código do produto a ser excluído: ");
+		fgets(codigo,sizeof(codigo),stdin);
+		codigo[strcspn(codigo,"\n")]=0;
+		int i;
+		bool codigocorreto = true;
+		for(i=0;i<strlen(codigo);i++){
+			if(!isdigit(codigo[i])){
+				printf("Digite apenas números para o código!\n");
+				codigocorreto=false;
+				break;
+			}else{
+				codigocorreto=true;
+			}
+		}
+		if(codigocorreto){
+			break;
+		}
+	}while(1);
+	
+	arquivoprodutos = fopen("produtos.txt","r");
+	tempprodutos = fopen("tempprodutos.txt","w");
+	
+    if (arquivoprodutos == NULL || tempprodutos == NULL) {
+        printf("ERRO: Não foi possível abrir o arquivo de produtos.\n");
+        if(arquivoprodutos) fclose(arquivoprodutos);
+        if(tempprodutos) fclose(tempprodutos);
+        system("pause");
+        return;
+    }
+    
+    while (fgets(linha, sizeof(linha), arquivoprodutos) != NULL) {
+        char linhaOriginal[200];
+        strcpy(linhaOriginal, linha);
+
+        char *nome = strtok(linha, ";");
+        char *codigo_  = strtok(NULL, ";");
+
+        if (codigo_ != NULL && strcmp(codigo_ , codigo) == 0) {
+            exclusaocorreta = true;
+            produtoencontrado=true;
+
+            printf("\nExclusão concluída!\n");                            
+        } else {
+            fputs(linhaOriginal, tempprodutos); 
+        }
+    }
+    fclose(arquivoprodutos);
+    fclose(tempprodutos);
+
+	if (!produtoencontrado) {
+        printf("\nERRO: Produto com código '%s' não encontrado!\n", codigo);
+        remove("tempprodutos.txt"); // Apaga o arquivo temporário pois nada mudou
+    } else if(exclusaocorreta) {
+        // substitui o arquivo antigo pelo novo
+        remove("produtos.txt");
+        rename("tempprodutos.txt", "produtos.txt");
+    } else {
+        // Se o produto foi encontrado mas a venda falhou, apaga o temp
+        remove("tempprodutos.txt");
+    }
+
+    system("pause");
+}
+
+void listarVendas(){
+    system("cls");
+    
+    FILE *arquivo;       
+    char linha[200];     
+    int numVenda = 1;    
+  
+    arquivo = fopen("vendas.txt", "r");  
+
+    if (arquivo == NULL) {
+        printf("Nenhuma venda foi registrada ainda ou erro ao abrir arquivo!\n");
+        system("pause");
+        return; 
+    }
+
+    printf("\n===== LISTA DE VENDAS REGISTRADAS =====\n");
+    printf("----------------------------------------\n");
+
+    while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        
+        linha[strcspn(linha, "\n")] = 0;
+        
+        printf("Venda %d:\n", numVenda);
+        
+      
+        char *pos = linha;   
+        printf("  ");        
+       
+        while (*pos != '\0') {  
+            
+            if (*pos == ';') {             
+                printf("\n  ");            
+            } else {                        
+                printf("%c", *pos);        
+            }
+            pos++;                         
+        }
+        
+        
+        printf("\n");                                
+        printf("----------------------------------------\n"); 
+        numVenda++;                                      
+    }
+
+    fclose(arquivo);
+    system("pause");
 }
