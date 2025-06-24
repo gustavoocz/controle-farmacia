@@ -1248,10 +1248,12 @@ void listarVendas(){
 void deletarVenda(){
     system("cls");
     
-    FILE *arquivoVendas, *tempVendas;
-    char linha[200];
+    FILE *arquivoVendas, *tempVendas, *arquivoProdutos, *tempProdutos;
+    char linha[200], linhaVendaExcluida[200];
     int numeroVenda, contadorVenda = 1;
     bool exclusaoCorreta = false;
+    char codigoProdutoExcluido[10];
+    int qtdVendidaExcluida = 0;
     
     printf("===== VENDAS REGISTRADAS =====\n");
     printf("-------------------------------\n");
@@ -1308,8 +1310,24 @@ void deletarVenda(){
         if (contadorVenda != numeroVenda) {
             fputs(linha, tempVendas);
         } else {
-            exclusaoCorreta = true;
-            printf("\nVenda %d excluída com sucesso!\n", numeroVenda);
+            strcpy(linhaVendaExcluida, linha);
+            
+            // Formato: CPF: xxx;Código: xxx;Produto: xxx;Qtd vendida: xxx;Valor unidade: xxx;Total: xxx
+            char *token = strtok(linhaVendaExcluida, ";");
+
+            token = strtok(NULL, ";");
+            if (token != NULL) {
+                sscanf(token, "Código: %s", codigoProdutoExcluido);
+            }
+            
+            token = strtok(NULL, ";");
+            token = strtok(NULL, ";"); 
+            if (token != NULL) {
+                sscanf(token, "Qtd vendida: %d", &qtdVendidaExcluida);
+            }
+            
+            printf("\nVenda %d excluída! Devolvendo %d unidades do produto código %s ao estoque.\n", 
+                   numeroVenda, qtdVendidaExcluida, codigoProdutoExcluido);
         }
         contadorVenda++;
     }
@@ -1318,8 +1336,52 @@ void deletarVenda(){
     fclose(tempVendas);
     
     if (exclusaoCorreta) {
+        arquivoProdutos = fopen("produtos.txt", "r");
+        tempProdutos = fopen("tempprodutos_venda.txt", "w");
+        
+        if (arquivoProdutos == NULL || tempProdutos == NULL) {
+            printf("ERRO: Não foi possível abrir o arquivo de produtos para atualizar estoque.\n");
+            if(arquivoProdutos) fclose(arquivoProdutos);
+            if(tempProdutos) fclose(tempProdutos);
+            system("pause");
+            return;
+        }
+        
+        while (fgets(linha, sizeof(linha), arquivoProdutos) != NULL) {
+            char linhaOriginal[200];
+            strcpy(linhaOriginal, linha);
+            
+            char *nome = strtok(linha, ";");
+            char *codigo = strtok(NULL, ";");
+            
+            if (codigo != NULL && strcmp(codigo, codigoProdutoExcluido) == 0) {
+                char *precoStr = strtok(NULL, ";");
+                char *qtdStr = strtok(NULL, ";");
+                char *remedioStr = strtok(NULL, ";");
+                char *genericoStr = strtok(NULL, ";");
+                
+                int qtdAtual = atoi(qtdStr);
+                int novaQtd = qtdAtual + qtdVendidaExcluida; 
+                float preco = atof(precoStr);
+                
+                fprintf(tempProdutos, "%s;%s;%.2f;%d;%s;%s", nome, codigo, preco, novaQtd, remedioStr, genericoStr);
+                printf("Estoque atualizado: %s agora tem %d unidades.\n", nome, novaQtd);
+            } else {
+                fputs(linhaOriginal, tempProdutos);
+            }
+        }
+        
+        fclose(arquivoProdutos);
+        fclose(tempProdutos);
+        
+        // Substitui os arquivos
         remove("vendas.txt");
         rename("tempvendas.txt", "vendas.txt");
+        
+        remove("produtos.txt");
+        rename("tempprodutos_venda.txt", "produtos.txt");
+        
+        printf("\nOperação concluída com sucesso!\n");
     } else {
         remove("tempvendas.txt");
     }
