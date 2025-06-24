@@ -30,6 +30,7 @@ void ProdutosBaixaqtd();
 void DeletarCliente();
 void DeletarProduto();
 void deletarVenda();
+void listagemproduts(char *linha_,int numproduto_,char *nome_,char *codigo_, char *valor_,char *qtd_,char *remed_,char *gener_);
 
 //struct
 struct produto{
@@ -448,29 +449,7 @@ void ListarProdutos(){
         remed = strtok(NULL, ";");
         gener = strtok(NULL,";");
 
-        if (nome != NULL && codigo != NULL && valor!=NULL && qtd != NULL && remed!= NULL && gener!= NULL) {
-        	
-        	if(strcmp(remed,"1")==0){
-        		remed= "Sim";
-			} else {
-				remed = "Não";
-			}
-			if(strcmp(gener,"1")==0){
-				gener = "Sim";
-			} else {
-				gener = "Não";
-			}
-        	
-            printf("Produto %d:\n", numproduto);
-            printf("  Nome: %s\n", nome);
-            printf("  Código: %s\n", codigo);
-            printf("  Valor: %s\n",valor);
-            printf("  Quantidade: %s\n",qtd);
-            printf("  É um remédio?: %s\n",remed);
-            printf("  É genérico?: %s\n\n",gener);
-        } else {
-            printf("Produto %d: %s (formato inválido)\n", numproduto, linha);
-        }
+        listagemproduts(linha,numproduto,nome,codigo,valor,qtd,remed,gener);
         numproduto++;
     }
 
@@ -480,6 +459,33 @@ void ListarProdutos(){
 	
 	system("pause");
 }
+
+void listagemproduts(char *linha_,int numproduto_,char *nome_,char *codigo_, char *valor_,char *qtd_,char *remed_,char *gener_){
+	if (nome_ != NULL && codigo_ != NULL && valor_!=NULL && qtd_ != NULL && remed_!= NULL && gener_!= NULL) {
+        	
+        	if(strcmp(remed_,"1")==0){
+        		remed_= "Sim";
+			} else {
+				remed_ = "Não";
+			}
+			if(strcmp(gener_,"1")==0){
+				gener_ = "Sim";
+			} else {
+				gener_ = "Não";
+			}
+        	
+            printf("Produto %d:\n", numproduto_);
+            printf("  Nome: %s\n", nome_);
+            printf("  Código: %s\n", codigo_);
+            printf("  Valor: %s\n",valor_);
+            printf("  Quantidade: %s\n",qtd_);
+            printf("  É um remédio?: %s\n",remed_);
+            printf("  É genérico?: %s\n\n",gener_);
+        } else {
+            printf("Produto %d: %s (formato inválido)\n", numproduto_, linha_);
+        }
+}
+
 
 void pesquisaCodigo(){
 	system("cls");
